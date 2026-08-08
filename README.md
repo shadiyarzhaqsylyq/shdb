@@ -1,4 +1,4 @@
-## Educational database in C.
+## Educational databases in C. B+TREE and LSMTREE IMPLEMENTATION.
 ```
 
 Example:
