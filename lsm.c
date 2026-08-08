@@ -1,6 +1,10 @@
 /*
   db_lsm.c — Tiny LSM-Tree database engine
 
+
+  gcc -O2 -o db_lsm db_lsm.c
+  ./db_lsm mydb.db
+
   Simplified single-/two-level LSM
 
     create table ...
