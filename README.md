@@ -12,6 +12,10 @@ db=# INSERT INTO employees VALUES (4, 'Molly', 80000, 'SE', 'Chicago');
 db=# INSERT INTO employees VALUES (5, 'Hector', 90000, 'Sales', 'New York');
 db=# INSERT INTO employees VALUES (6, 'Sarah', 100000, 'Sales', 'Miami');
 
+db=# INSERT INTO employees VALUES (7, 'Jack', 110000, 'Eng', 'SF');
+db=# INSERT INTO employees VALUES (8, 'Sadie', 120000, 'Eng', 'Washington');
+
+
 db=# SELECT * FROM employees;
 
 db=# SELECT * FROM employees WHERE department = 'SE' AND salary > 50000;
@@ -31,8 +35,8 @@ UPDATE employees SET city = 'Miami', salary = 100000 WHERE id = 1;
 UPDATE users SET salary = 75000 WHERE id >= 3 AND (city = 'New York' OR city = 'Chicago');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
-DELETE FROM users WHERE id < 1;
-DELETE FROM users WHERE id < 1 OR department = 'Sales';
+DELETE FROM users WHERE id < 6;
+DELETE FROM users WHERE id < 4 OR department = 'Sales';
 DELETE FROM users WHERE id < 1 AND department = 'SE';
 
 
