@@ -41,9 +41,9 @@ Add 2 rows again:
 db=# INSERT INTO employees VALUES (7, 'Jack', 110000, 'Eng', 'SF');
 db=# INSERT INTO employees VALUES (8, 'Sadie', 120000, 'Eng', 'Washington');
 
-DELETE FROM employees WHERE id < 6 OR department = 'Sales';
+DELETE FROM employees WHERE id > 6 OR department = 'Sales';
 
-DELETE FROM employees WHERE id < 1 AND department = 'SE';
+DELETE FROM employees WHERE id > 1 AND department = 'SE';
 
 
 ```
