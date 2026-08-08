@@ -67,6 +67,17 @@ WHERE city = 'Miami' AND (department = 'HR' OR department = 'Sales');
 
 
 
+SELECT employee_id, first_name, city FROM employees 
+WHERE (city = 'Miami' AND first_name = 'Sarah') OR (employee_id <= 2000);
+
+
+SELECT item_name, price, status 
+FROM inventory 
+WHERE status = 'Active' AND (price < 10 OR price > 500);
+
+
+
+
 db=# \d
 Tree:
 - leaf (size 1)
