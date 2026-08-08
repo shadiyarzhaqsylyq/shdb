@@ -35,7 +35,7 @@ UPDATE employees SET city = 'Miami', salary = 100000 WHERE id = 1;
 UPDATE users SET salary = 75000 WHERE id >= 3 AND (city = 'New York' OR city = 'Chicago');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
-DELETE FROM users WHERE id < 6;
+DELETE FROM employees WHERE id < 6;
 
 Add 2 rows again:
 db=# INSERT INTO employees VALUES (7, 'Jack', 110000, 'Eng', 'SF');
