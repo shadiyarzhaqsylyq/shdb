@@ -15,6 +15,9 @@
 // Data Types & Schema Definition
 // ============================================================================
 /*
+
+***1 file 1 table***
+
 Example 1: Custom Columns & Custom Primary Key
 
 CREATE TABLE users (user_id INT PRIMARY KEY, email VARCHAR(64), age INT, country VARCHAR(32));
