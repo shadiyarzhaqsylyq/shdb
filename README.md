@@ -11,7 +11,6 @@ db=# INSERT INTO employees VALUES (3, 'Bob', 70000, 'SE', 'Miami');
 db=# INSERT INTO employees VALUES (4, 'Molly', 80000, 'SE', 'Chicago');
 db=# INSERT INTO employees VALUES (5, 'Hector', 90000, 'Sales', 'New York');
 db=# INSERT INTO employees VALUES (6, 'Sarah', 100000, 'Sales', 'Miami');
-
 db=# INSERT INTO employees VALUES (7, 'Jack', 110000, 'Eng', 'SF');
 db=# INSERT INTO employees VALUES (8, 'Sadie', 120000, 'Eng', 'Washington');
 
@@ -61,6 +60,14 @@ INSERT INTO users VALUES (102, 'bob@test.com', 35, 'Canada');
 Example 2: Adding Many Custom Columns
 CREATE TABLE products (product_code INT PRIMARY KEY, title VARCHAR(50), price INT, stock INT, category VARCHAR(32), brand VARCHAR(32));
 INSERT INTO products VALUES (501, 'Laptop', 1200, 15, 'Electronics', 'TechCorp');
+INSERT INTO products VALUES (502, 'Wireless Headphones', 250, 45, 'Electronics', 'SoundWave');
+INSERT INTO products VALUES (503, 'Ergonomic Office Chair', 350, 20, 'Furniture', 'ErgoComfort');
+INSERT INTO products VALUES (504, 'Stainless Steel Water Bottle', 25, 150, 'Kitchenware', 'HydroGear');
+INSERT INTO products VALUES (505, 'Mechanical Gaming Keyboard', 110, 60, 'Electronics', 'KeyMaster');
+INSERT INTO products VALUES (506, 'Running Shoes', 85, 80, 'Apparel', 'Stride');
+INSERT INTO products VALUES (507, 'Smart Fitness Watch', 199, 35, 'Electronics', 'FitPulse');
+INSERT INTO products VALUES (508, 'Organic Dark Roast Coffee', 18, 200, 'Groceries', 'RoastCraft');
+
 
 
 ```
