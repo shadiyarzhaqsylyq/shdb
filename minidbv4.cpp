@@ -59,6 +59,14 @@ SELECT * FROM employees
 WHERE city = 'New York' OR city = 'Chicago';
 
 
+SELECT * FROM employees 
+WHERE (city = 'Miami' AND department = 'HR') OR salary > 70000;
+
+SELECT * FROM employees 
+WHERE city = 'Miami' AND (department = 'HR' OR department = 'Sales');
+
+
+
 db=# \d
 Tree:
 - leaf (size 1)
