@@ -37,5 +37,6 @@ WHERE (city = 'Miami' AND name = 'Sarah') OR (id <= 1);
 
 
 ```
-
+g++ -std=c++17 -O2 db.cpp -o db
+./db mydb.db
 
