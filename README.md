@@ -35,12 +35,17 @@ WHERE (city = 'Miami' AND name = 'Sarah') OR (id <= 1);
 
 
 UPDATE employees SET city = 'Miami', salary = 100000 WHERE id = 1;
+UPDATE users SET salary = 75000 WHERE id >= 4 AND (city = 'New York' OR city = 'Chicago');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
+DELETE FROM users WHERE id < 1;
+DELETE FROM users WHERE id < 1 OR department = 'Sales';
+DELETE FROM users WHERE id < 1 AND department = 'SE';
+
 
 ```
 
-Another Example
+TRY
 ```
 
 Example 1: Custom Columns & Custom Primary Key
@@ -49,40 +54,15 @@ CREATE TABLE users (user_id INT PRIMARY KEY, email VARCHAR(64), age INT, country
 INSERT INTO users VALUES (101, 'alice@test.com', 28, 'USA');
 INSERT INTO users VALUES (102, 'bob@test.com', 35, 'Canada');
 
-SELECT * FROM users WHERE age >= 30;
--- Output: (102, 'bob@test.com', 35, 'Canada')
-
-UPDATE users SET email = 'alice_new@test.com' WHERE user_id = 101;
-SELECT * FROM users WHERE user_id = 101;
--- Output: (101, 'alice_new@test.com', 28, 'USA')
-
 
 Example 2: Adding Many Custom Columns
 CREATE TABLE products (product_code INT PRIMARY KEY, title VARCHAR(50), price INT, stock INT, category VARCHAR(32), brand VARCHAR(32));
 INSERT INTO products VALUES (501, 'Laptop', 1200, 15, 'Electronics', 'TechCorp');
 
-SELECT * FROM products WHERE price > 1000;
--- Output: (501, 'Laptop', 1200, 15, 'Electronics', 'TechCorp')
-
-
--- Simple AND condition:
-SELECT * FROM users WHERE age >= 21 AND country = 'USA';
-
--- Simple OR condition:
-SELECT * FROM users WHERE country = 'USA' OR country = 'Canada';
-
--- Complex combined logic with parentheses ():
-SELECT * FROM users WHERE salary > 50000 AND (department = 'Engineering' OR department = 'HR');
-
--- Updating rows with AND/OR conditions:
-UPDATE users SET salary = 75000 WHERE age >= 30 AND (city = 'New York' OR city = 'Chicago');
-
--- Deleting rows with AND/OR conditions:
-DELETE FROM users WHERE age < 18 OR country = 'Unknown';
 
 ```
 Not Implemented catalog, table_heap, page, buffer pool, disk manager, WAL/recovery, query optimizer, executor.
-
+# C++
 db=# \d
 Tree:
 - leaf (size 1)
@@ -95,3 +75,8 @@ g++ -std=c++17 -O2 db.cpp -o db
 
 ./db mydb.db
 
+
+# C
+
+
+gcc -std=c99 -Wall -Wextra db.c -o db
