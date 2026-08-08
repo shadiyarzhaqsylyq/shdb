@@ -4,6 +4,9 @@ can use any column name
 Flexible Primary Key - user_id INT PRIMARY KEY or product code INT PRIMARY KEY
 VARCHAR(N), STRING(N), CHAR(N).
 ```
+
+Example1
+
 db=# CREATE TABLE employees (id INT PRIMARY KEY, name VARCHAR(32), salary INT, department VARCHAR(32), city VARCHAR(32)); do not support different names, can not change order of columns
 db=# INSERT INTO employees VALUES (1, 'Alice', 50000, 'HR', 'New York');
 db=# INSERT INTO employees VALUES (2, 'John', 60000, 'HR', 'Chicago');
@@ -45,19 +48,16 @@ DELETE FROM employees WHERE id > 6 OR department = 'Sales';
 DELETE FROM employees WHERE id > 1 AND department = 'SE';
 
 
-```
 
-TRY
-```
 
-Example 1: Custom Columns & Custom Primary Key
+Example2
 
 CREATE TABLE users (user_id INT PRIMARY KEY, email VARCHAR(64), age INT, country VARCHAR(32));
 INSERT INTO users VALUES (101, 'alice@test.com', 28, 'USA');
 INSERT INTO users VALUES (102, 'bob@test.com', 35, 'Canada');
 
+Example3
 
-Example 2: Adding Many Custom Columns
 CREATE TABLE products (product_code INT PRIMARY KEY, title VARCHAR(50), price INT, stock INT, category VARCHAR(32), brand VARCHAR(32));
 INSERT INTO products VALUES (501, 'Laptop', 1200, 15, 'Electronics', 'TechCorp');
 INSERT INTO products VALUES (502, 'Wireless Headphones', 250, 45, 'Electronics', 'SoundWave');
@@ -69,8 +69,14 @@ INSERT INTO products VALUES (507, 'Smart Fitness Watch', 199, 35, 'Electronics',
 INSERT INTO products VALUES (508, 'Organic Dark Roast Coffee', 18, 200, 'Groceries', 'RoastCraft');
 
 
-
 ```
+
+
+
+
+
+
+
 Not Implemented catalog, table_heap, page, buffer pool, disk manager, WAL/recovery, query optimizer, executor.
 # C++
 db=# \d
