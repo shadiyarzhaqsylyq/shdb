@@ -18,6 +18,8 @@
 
 /*
 
+No AST, no AND, OR commands
+
 db=# CREATE TABLE users (id INT PRIMARY KEY, username VARCHAR(32), email VARCHAR(255));
 CREATE TABLE
 
