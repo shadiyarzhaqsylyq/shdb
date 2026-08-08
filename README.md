@@ -2,6 +2,7 @@
 can use any column name
 
 Flexible Primary Key - user_id INT PRIMARY KEY or product code INT PRIMARY KEY
+VARCHAR(N), STRING(N), CHAR(N).
 ```
 db=# CREATE TABLE employees (id INT PRIMARY KEY, name VARCHAR(32), salary INT, department VARCHAR(32), city VARCHAR(32)); do not support different names, can not change order of columns
 db=# INSERT INTO employees VALUES (1, 'Alice', 50000, 'HR', 'New York');
