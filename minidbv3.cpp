@@ -14,6 +14,8 @@
 // ============================================================================
 // Data Types & Constants
 // ============================================================================
+
+
 /*
 
 db=# CREATE TABLE users (id INT PRIMARY KEY, username VARCHAR(32), email VARCHAR(255));
@@ -61,6 +63,10 @@ g++ -std=c++17 -O2 db.cpp -o db
 ./db mydb.db
 
 */
+
+
+
+
 constexpr size_t COLUMN_USERNAME_SIZE = 32;
 constexpr size_t COLUMN_EMAIL_SIZE = 255;
 
@@ -828,7 +834,7 @@ void Table::internal_node_split_and_insert(uint32_t parent_page_num, uint32_t ch
 }
 
 // ============================================================================
-// SQL Lexer & Parser (PostgreSQL Syntax)
+// SQL Lexer & Parser
 // ============================================================================
 
 struct Token {
@@ -1440,7 +1446,7 @@ ExecuteResult execute_statement(Statement* statement, Table* table) {
 // ============================================================================
 
 void print_help() {
-    std::cout << "PostgreSQL SQL Commands:\n"
+    std::cout << "SQL Commands:\n"
               << "  CREATE TABLE users (id INT PRIMARY KEY, username VARCHAR(32), email VARCHAR(255));\n"
               << "  INSERT INTO users VALUES (1, 'alice', 'alice@example.com');\n"
               << "  SELECT * FROM users [WHERE id = 1];\n"
