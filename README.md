@@ -34,7 +34,7 @@ SELECT * FROM employees
 WHERE (city = 'Miami' AND name = 'Sarah') OR (id <= 1);
 
 
-UPDATE employees SET city = 'Miami', salary = 100000 WHERE user_id = 1;
+UPDATE employees SET city = 'Miami', salary = 100000 WHERE id = 1;
 
 DELETE: Filters and deletes matching rows by any custom column condition.
 
