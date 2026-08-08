@@ -13,25 +13,18 @@ db=# INSERT INTO employees VALUES (5, 'Hector', 90000, 'Sales', 'New York');
 db=# INSERT INTO employees VALUES (6, 'Sarah', 100000, 'Sales', 'Miami');
 
 db=# SELECT * FROM employees;
-(1, Alice, 50000, HR, New York)
-(2, John, 60000, HR, Chicago)
-(3, Bob, 70000, SE, Miami)
+
 db=# SELECT * FROM employees WHERE department = 'SE' AND salary > 50000;
-(3, Bob, 70000, SE, Miami)
 db=# SELECT * FROM employees WHERE city = 'New York' OR city = 'Chicago';
-(1, Alice, 50000, HR, New York)
-(2, John, 60000, HR, Chicago)
 
 
 
-SELECT * FROM employees 
-WHERE (city = 'Miami' AND department = 'HR') OR salary > 70000;
 
 SELECT * FROM employees 
-WHERE city = 'Miami' AND (department = 'HR' OR department = 'Sales');
+WHERE (city = 'Miami' AND department = 'Sales') OR salary > 100000;
 
 SELECT * FROM employees 
-WHERE (city = 'Miami' AND name = 'Sarah') OR (id <= 1);
+WHERE city = 'Miami' AND (department = 'SE' OR department = 'Sales');
 
 
 UPDATE employees SET city = 'Miami', salary = 100000 WHERE id = 1;
