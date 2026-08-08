@@ -52,8 +52,23 @@ db=# SELECT * FROM users WHERE id = 1;
 db=# DELETE FROM users WHERE id = 2;
 DELETE 1
 
+
+----------------------------------
+
+AND, OR Commands Examples
+
+db=# CREATE TABLE employees (id INT PRIMARY KEY, name VARCHAR(32), salary INT, department VARCHAR(32), city VARCHAR(32));
+db=# INSERT INTO employees VALUES (1, 'Alice', 50000, 'HR', 'New York');
+db=# INSERT INTO employees VALUES (2, 'John', 60000, 'HR', 'Chicago');
+db=# INSERT INTO employees VALUES (3, 'Bob', 70000, 'SE', 'Miami');
+db=# INSERT INTO employees VALUES (4, 'Molly', 80000, 'SE', 'Chicago');
+db=# INSERT INTO employees VALUES (5, 'Hector', 90000, 'Sales', 'New York');
+db=# INSERT INTO employees VALUES (6, 'Sarah', 100000, 'Sales', 'Miami');
+
+
+
 SELECT * FROM employees 
-WHERE department = 'Sales' AND salary > 50000;
+WHERE department = 'SE' AND salary > 50000;
 
 SELECT * FROM employees 
 WHERE city = 'New York' OR city = 'Chicago';
@@ -67,13 +82,13 @@ WHERE city = 'Miami' AND (department = 'HR' OR department = 'Sales');
 
 
 
-SELECT employee_id, first_name, city FROM employees 
-WHERE (city = 'Miami' AND first_name = 'Sarah') OR (employee_id <= 2000);
+SELECT id, name, city FROM employees
+WHERE (city = 'Miami' AND name = 'Sarah') OR (id <= 1);
 
 
-SELECT item_name, price, status 
-FROM inventory 
-WHERE status = 'Active' AND (price < 10 OR price > 500);
+SELECT id, name, department 
+FROM employees 
+WHERE department = 'SE' AND (price < 2 OR price > 4);
 
 
 
