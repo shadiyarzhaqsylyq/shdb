@@ -34,7 +34,7 @@ db=# SELECT * FROM employees WHERE city = 'New York' OR city = 'Chicago';
 (1, Alice, 50000, HR, New York)
 (2, John, 60000, HR, Chicago)
 ```
-# X
+# +
 
 ```
 SELECT * FROM employees 
@@ -43,15 +43,10 @@ WHERE (city = 'Miami' AND department = 'HR') OR salary > 70000;
 SELECT * FROM employees 
 WHERE city = 'Miami' AND (department = 'HR' OR department = 'Sales');
 
-
-
-SELECT id, name, city FROM employees
+SELECT * FROM employees 
 WHERE (city = 'Miami' AND name = 'Sarah') OR (id <= 1);
 
 
-SELECT id, name, department 
-FROM employees 
-WHERE department = 'SE' AND (price < 2 OR price > 4);
 ```
 
 
