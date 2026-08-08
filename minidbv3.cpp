@@ -14,7 +14,53 @@
 // ============================================================================
 // Data Types & Constants
 // ============================================================================
+/*
 
+db=# CREATE TABLE users (id INT PRIMARY KEY, username VARCHAR(32), email VARCHAR(255));
+CREATE TABLE
+
+db=# INSERT INTO users VALUES (1, 'alice', 'alice@mail.com');
+INSERT 0 1
+
+db=# INSERT INTO users VALUES (2, 'bob', 'bob@mail.com');
+INSERT 0 1
+
+db=# SELECT * FROM users;
+(1, alice, alice@mail.com)
+(2, bob, bob@mail.com)
+
+db=# SELECT COUNT(*) FROM users WHERE id >= 1;
+2 row(s).
+
+db=# BEGIN;
+BEGIN
+
+db=# UPDATE users SET username = 'charlie' WHERE id = 1;
+UPDATE 1
+
+db=# SELECT * FROM users WHERE id = 1;
+(1, charlie, alice@mail.com)
+
+db=# ROLLBACK;
+ROLLBACK
+
+db=# SELECT * FROM users WHERE id = 1;
+(1, alice, alice@mail.com)
+
+db=# DELETE FROM users WHERE id = 2;
+DELETE 1
+
+db=# \d
+Tree:
+- leaf (size 1)
+  - 1
+
+db=# \q
+
+g++ -std=c++17 -O2 db.cpp -o db
+./db mydb.db
+
+*/
 constexpr size_t COLUMN_USERNAME_SIZE = 32;
 constexpr size_t COLUMN_EMAIL_SIZE = 255;
 
