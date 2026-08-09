@@ -77,7 +77,7 @@ INSERT INTO products VALUES (508, 'Organic Dark Roast Coffee', 18, 200, 'Groceri
 
 
 Not Implemented catalog (tables, schemas, indexes), Buffer Pool Manager, LRU-K Replacer, Disk Scheduler, disk manager, WAL/recovery, query optimizer, executor.
-# C++
+
 db=# \d
 Tree:
 - leaf (size 1)
