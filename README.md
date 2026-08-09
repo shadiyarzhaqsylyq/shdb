@@ -41,59 +41,59 @@ INSERT INTO products VALUES (110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
 
 SELECT * FROM products;
 output:
-(101, 'Laptop', 'Electronics', 110, 10, 'New York');
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
-(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami');
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
-(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York');
-(106, 'Blender', 'Appliances', 160, 60, 'Miami');
-(107, 'Running Shoes', 'Footwear', 170, 70, 'LA');
-(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF');
-(109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
+(101, 'Laptop', 'Electronics', 110, 10, 'New York')
+(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
+(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami')
+(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
+(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York')
+(106, 'Blender', 'Appliances', 160, 60, 'Miami')
+(107, 'Running Shoes', 'Footwear', 170, 70, 'LA')
+(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF')
+(109, 'Dumbbells', 'Fitness', 190, 90, 'LA')
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
 
 
 
 SELECT * FROM products WHERE category = 'Fitness' AND product_id > 106;
 output:
-(109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
+(109, 'Dumbbells', 'Fitness', 190, 90, 'LA')
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
 
 
 
 SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
 output:
-(107, 'Running Shoes', 'Footwear', 170, 70, 'LA');
-(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF');
-(109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
+(107, 'Running Shoes', 'Footwear', 170, 70, 'LA')
+(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF')
+(109, 'Dumbbells', 'Fitness', 190, 90, 'LA')
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
 
 
 
 SELECT * FROM products WHERE (city = 'SF' AND category = 'Fitness') OR stock_quant < 60;
 output:
-(101, 'Laptop', 'Electronics', 110, 10, 'New York');
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
-(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami');
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
-(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York');
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
+(101, 'Laptop', 'Electronics', 110, 10, 'New York')
+(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
+(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami')
+(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
+(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York')
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
 
 
 
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 output:
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
+(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
+(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
 
 
 UPDATE products SET city = 'Boston', price = 1000 WHERE product_id >= 106;
 output:
-(106, 'Blender', 'Appliances', 1000, 60, 'Boston');
-(107, 'Running Shoes', 'Footwear', 1000, 70, 'Boston');
-(108, 'Hiking Boots', 'Footwear', 1000, 80, 'Boston');
-(109, 'Dumbbells', 'Fitness', 1000, 90, 'Boston');
-(110, 'Yoga Mat', 'Fitness', 1000, 100, 'Boston');
+(106, 'Blender', 'Appliances', 1000, 60, 'Boston')
+(107, 'Running Shoes', 'Footwear', 1000, 70, 'Boston')
+(108, 'Hiking Boots', 'Footwear', 1000, 80, 'Boston')
+(109, 'Dumbbells', 'Fitness', 1000, 90, 'Boston')
+(110, 'Yoga Mat', 'Fitness', 1000, 100, 'Boston')
 
 
 
