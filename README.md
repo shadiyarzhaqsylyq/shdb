@@ -54,8 +54,8 @@ output:
 
 SELECT * FROM products WHERE category = 'Appliances' AND product_id > 107;
 output:
-INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'SF');
-INSERT INTO products VALUES (109, 'Microwave', 'Appliances', 190, 90, 'LA');
+(108, 'Blender', 'Appliances', 180, 80, 'SF');
+(109, 'Microwave', 'Appliances', 190, 90, 'LA');
 
 
 
