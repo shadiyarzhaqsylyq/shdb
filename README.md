@@ -22,7 +22,7 @@ VARCHAR, CHAR - default 32
 Operators - >=, <=, =, <, >
 ```
 
-CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hourly_operating_cost INT, active_fleet_count INT, primary_hub CHAR);
+CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hoc INT, active_fleet INT, primary_hub CHAR);
 
 INSERT INTO aircraft_fleet VALUES (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
 INSERT INTO aircraft_fleet VALUES (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London');
@@ -63,7 +63,8 @@ output:
 (1009, 'Cessna Citation X', 'Private Jet', 4100, 12, 'New York')
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
-SELECT * FROM products WHERE (city = 'SF' AND category = 'Fitness') OR stock_quant < 60;
+
+SELECT * FROM products WHERE (city = '' AND category = 'Norrowbody') OR hoc < 60;
 output:
 
 
