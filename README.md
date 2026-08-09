@@ -42,7 +42,7 @@ output:
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'Doha')
 
 
-SELECT * FROM products WHERE category = 'Fitness' AND product_id > 106;
+SELECT * FROM products WHERE category = 'Widebody' AND aircraft_code > 1001;
 output:
 
 
