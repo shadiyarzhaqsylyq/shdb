@@ -98,11 +98,10 @@ output:
 
 UPDATE products SET stock_quant = 1 WHERE stock_quant <= 50 AND (city = 'Chicago' OR city = 'New York');
 output:
-(101, 'Laptop', 'Electronics', 110, 1, 'New York');
-(102, 'Smartphone', 'Electronics', 120, 1, 'Chicago');
-(103, 'Desk Chair', 'Furniture', 130, 1, 'Miami');
-(104, 'Standing Desk', 'Furniture', 140, 1, 'Chicago');
-(105, 'Coffee Maker', 'Appliances', 150, 1, 'New York');
+(101, 'Laptop', 'Electronics', 110, 1, 'New York')
+(102, 'Smartphone', 'Electronics', 120, 1, 'Chicago')
+(104, 'Standing Desk', 'Furniture', 140, 1, 'Chicago')
+(105, 'Coffee Maker', 'Appliances', 150, 1, 'New York')
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
