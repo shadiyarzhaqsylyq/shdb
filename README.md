@@ -61,10 +61,10 @@ output:
 
 SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
 output:
-INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'SF');
-INSERT INTO products VALUES (109, 'Microwave', 'Appliances', 190, 90, 'LA');
-INSERT INTO products VALUES (110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
+(107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
+(108, 'Blender', 'Appliances', 180, 80, 'SF');
+(109, 'Microwave', 'Appliances', 190, 90, 'LA');
+(110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
 
 
 
