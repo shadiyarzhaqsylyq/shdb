@@ -22,7 +22,7 @@ VARCHAR, CHAR - default 32
 Operators - >=, <=, =, <, >
 ```
 
-CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hoc INT, active_fleet INT, primary_hub CHAR);
+CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hoc INT, active_fleet INT, city CHAR);
 
 INSERT INTO aircraft_fleet VALUES (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
 INSERT INTO aircraft_fleet VALUES (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London');
@@ -71,7 +71,7 @@ output:
 (1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago')
 (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Atlanta')
 
-SELECT * FROM aircraft_fleet WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
+SELECT * FROM aircraft_fleet WHERE city = 'Chicago' AND (category = '' OR category = '');
 output:
 
 
