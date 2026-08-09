@@ -85,7 +85,7 @@ Tree:
 
 db=# \q
 
-g++ -std=c++17 -O2 db.cpp -o db
+g++ -O2 db.cpp -o db
 
 
 ./db mydb.db
@@ -94,4 +94,4 @@ g++ -std=c++17 -O2 db.cpp -o db
 # C
 
 
-gcc -std=c99 -Wall -Wextra db.c -o db
+gcc -Wall -Wextra db.c -o db
