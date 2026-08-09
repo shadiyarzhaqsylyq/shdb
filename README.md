@@ -90,7 +90,7 @@ output:
 
 
 
-UPDATE aircraft_fleet SET stock_quant = 1 WHERE stock_quant <= 50 AND (city = 'Chicago' OR city = 'New York');
+UPDATE aircraft_fleet SET=1 WHERE<= 50 AND (city = 'Chicago' OR city = 'New York');
 output:
 
 
