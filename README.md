@@ -68,10 +68,13 @@ output:
 
 
 
-
-
-
 SELECT * FROM products WHERE (city = 'LA' AND category = 'Appliances') OR stock_quant > 90;
+output:
+(107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
+(109, 'Microwave', 'Appliances', 190, 90, 'LA');
+(110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
+
+
 
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 
