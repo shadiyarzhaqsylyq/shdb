@@ -97,7 +97,7 @@ SELECT * FROM products WHERE (city = 'Miami' AND category = 'Electronics') OR pr
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 
 
-UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 1;
+UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 101;
 UPDATE products SET salary = 75000 WHERE product_id >= 3 AND (city = 'New York' OR city = 'Chicago');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
