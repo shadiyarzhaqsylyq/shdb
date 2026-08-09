@@ -124,14 +124,13 @@ output:
 
 Update rows and try
 
-UPDATE products SET price = 40 WHERE product_id = 105;
-UPDATE products SET price = 40 WHERE product_id = 106;
+UPDATE products SET price = 40 WHERE product_id > 101;
 output:
 output:
 (101, 'Laptop', 'Electronics', 110, 1, 'New York')
-(102, 'Smartphone', 'Electronics', 120, 1, 'Chicago')
-(103, 'Desk Chair', 'Furniture', 130, 1, 'Miami')
-(104, 'Standing Desk', 'Furniture', 140, 1, 'Chicago')
+(102, 'Smartphone', 'Electronics', 40, 1, 'Chicago')
+(103, 'Desk Chair', 'Furniture', 40, 1, 'Miami')
+(104, 'Standing Desk', 'Furniture', 40, 1, 'Chicago')
 (105, 'Coffee Maker', 'Appliances', 40, 1, 'New York')
 (106, 'Blender', 'Appliances', 40, 60, 'Boston')
 
