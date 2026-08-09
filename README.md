@@ -67,8 +67,8 @@ output:
 SELECT * FROM aircraft_fleet WHERE (city = 'Chicago' AND category = 'Regional') OR hoc < 10000;
 output:
 (1003, 'Embraer E190', 'Regional', 2900, 32, 'Chicago')
-(1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago')
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
+(1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago')
 (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Atlanta')
 
 SELECT * FROM aircraft_fleet WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
