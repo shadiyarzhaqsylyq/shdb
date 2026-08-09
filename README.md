@@ -69,10 +69,8 @@ INSERT INTO users VALUES (102, 'bob@test.com', 35, 'Canada');
 
 Example3
 
-CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR(50), category VARCHAR(32), price DECIMAL(8, 2), stock_quantity INT, warehouse_city VARCHAR(32)); or
 
-
-CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price FLOAT, stock_quantity INT, warehouse_city VARCHAR);
+CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR);
 
 INSERT INTO products VALUES (101, 'Laptop', 'Electronics', 999.99, 45, 'Seattle');
 INSERT INTO products VALUES (102, 'Desk Chair', 'Furniture', 150.00, 120, 'Austin');
