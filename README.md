@@ -77,8 +77,10 @@ INSERT INTO products VALUES (103, 'Headphones', 'Electronics', 150, 200, 'Miami'
 INSERT INTO products VALUES (104, 'Desk Chair', 'Furniture', 250, 35, 'Chicago');
 INSERT INTO products VALUES (105, 'Monitor', 'Electronics', 350, 80, 'New York');
 INSERT INTO products VALUES (106, 'Keyboard', 'Electronics', 75, 150, 'Miami');
-INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 90, 60, 'SF');
+INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 90, 60, 'LA');
 INSERT INTO products VALUES (108, 'Blender', 'Appliances', 60, 90, 'Washington');
+
+SELECT * FROM products;
 
 ```
 
