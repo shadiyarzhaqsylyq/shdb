@@ -64,7 +64,7 @@ output:
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
 
-SELECT * FROM products WHERE (city = '' AND category = 'Norrowbody') OR hoc < 60;
+SELECT * FROM products WHERE (city = 'Chicago' AND category = 'Regional') OR hoc < 10000;
 output:
 
 
