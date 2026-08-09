@@ -40,7 +40,7 @@ INSERT INTO products VALUES (110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
 
 SELECT * FROM products;
 
-SELECT * FROM products WHERE category = 'Appliances' AND product_id > 101;
+SELECT * FROM products WHERE category = 'Appliances' AND product_id > 107;
 SELECT * FROM products WHERE city = 'New York' OR city = 'Chicago';
 
 
