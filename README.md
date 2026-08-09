@@ -1,8 +1,20 @@
 ## Educational database in C.
-can use any column name
+
+
+can use any column name, types
+
+
 1 file 1 table
+
+
 Flexible Primary Key - user_id INT PRIMARY KEY or product code INT PRIMARY KEY
-VARCHAR(N), STRING(N), CHAR(N).
+
+
+supported types
+
+VARCHAR(N), STRING(N), CHAR(N), INT, INTEGER
+
+VARCHAR - default 32
 ```
 
 Example1
