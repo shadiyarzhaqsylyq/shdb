@@ -96,7 +96,7 @@ output:
 
 
 
-UPDATE products SET stock_quant = 1 WHERE product_id <= 106 AND (city = 'LA' OR city = 'SF');
+UPDATE products SET stock_quant = 1 WHERE stock_quant <= 50 AND (city = 'LA' OR city = 'SF');
 output:
 
 
