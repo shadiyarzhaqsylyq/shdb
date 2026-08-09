@@ -97,6 +97,8 @@ SELECT * FROM products;
 
 Not Implemented catalog (tables, schemas, indexes), Buffer Pool Manager, LRU-K Replacer, Disk Scheduler, disk manager, WAL/recovery, query optimizer, executor.
 
+
+
 db=# \d - prints Tree
 
 db=# \q - exit
