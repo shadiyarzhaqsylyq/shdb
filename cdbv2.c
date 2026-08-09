@@ -12,7 +12,6 @@
 // ============================================================================
 // Data Types & Schema Definition
 // ============================================================================
-// no employees default schema
 #define PAGE_SIZE 4096
 #define TABLE_MAX_PAGES 400
 #define INVALID_PAGE_NUM UINT32_MAX
