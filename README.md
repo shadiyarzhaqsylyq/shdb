@@ -7,7 +7,7 @@ can use any column name, types
 1 file 1 table
 
 
-Flexible Primary Key - user_id INT PRIMARY KEY or product code INT PRIMARY KEY
+Flexible Primary Key - user_id INT PRIMARY KEY or product_code INT PRIMARY KEY
 
 
 supported types
