@@ -122,8 +122,7 @@ output:
 (106, 'Blender', 'Appliances', 1000, 60, 'Boston')
 
 
-Add 2 rows again
-
+Update rows and try
 
 DELETE FROM products WHERE product_id > 6 OR city = '';
 
