@@ -34,9 +34,14 @@ INSERT INTO aircraft_fleet VALUES (1005, 'Airbus A320neo', 'Narrowbody', 3900, 6
 INSERT INTO aircraft_fleet VALUES (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'Doha');
 
 
-SELECT * FROM products;
+SELECT * FROM aircraft_fleet;
 output:
-
+(1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas')
+(1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'Frankfurt')
+(1003, 'Embraer E190', 'Regional', 2900, 32, 'Denver')
+(1004, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London')
+(1005, 'Airbus A320neo', 'Narrowbody', 3900, 60, 'Atlanta')
+(1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'Doha')
 
 
 SELECT * FROM products WHERE category = 'Fitness' AND product_id > 106;
