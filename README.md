@@ -46,7 +46,7 @@ SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
 
 
 
-SELECT * FROM products WHERE (city = 'LA' AND category = 'Appliances') OR stock_quant > 50;
+SELECT * FROM products WHERE (city = 'LA' AND category = 'Appliances') OR stock_quant > 90;
 
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 
