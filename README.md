@@ -1,4 +1,4 @@
-## Educational databases in C/C++.
+## Educational database in C.
 can use any column name
 1 file 1 table
 Flexible Primary Key - user_id INT PRIMARY KEY or product code INT PRIMARY KEY
@@ -85,13 +85,16 @@ Tree:
 
 db=# \q
 
-g++ -O2 db.cpp -o db
 
-
-./db mydb.db
 
 
 # C
 
 
 gcc -Wall -Wextra db.c -o db
+
+./db sql.db
+or
+./db sql
+
+
