@@ -69,7 +69,7 @@ output:
 
 
 
-SELECT * FROM products WHERE (city = 'SF' AND category = 'Appliances') OR stock_quant > 60;
+SELECT * FROM products WHERE (city = 'SF' AND category = 'Fitness') OR stock_quant < 60;
 output:
 
 
