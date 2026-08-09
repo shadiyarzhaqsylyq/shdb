@@ -71,7 +71,12 @@ output:
 
 SELECT * FROM products WHERE (city = 'SF' AND category = 'Fitness') OR stock_quant < 60;
 output:
-
+(101, 'Laptop', 'Electronics', 110, 10, 'New York');
+(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
+(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami');
+(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
+(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York');
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
 
 
 
