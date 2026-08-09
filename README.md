@@ -62,7 +62,10 @@ output:
 
 SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
 output:
-
+(107, 'Running Shoes', 'Footwear', 170, 70, 'LA');
+(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF');
+(109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
 
 
 
