@@ -67,11 +67,7 @@ DELETE FROM employees WHERE id > 1 AND department = 'SE';
 
 Example2
 
-CREATE TABLE users (user_id INT PRIMARY KEY, email VARCHAR(64), age INT, country VARCHAR(32));
-INSERT INTO users VALUES (101, 'alice@test.com', 28, 'USA');
-INSERT INTO users VALUES (102, 'bob@test.com', 35, 'Canada');
 
-Example3
 
 
 CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR); or
