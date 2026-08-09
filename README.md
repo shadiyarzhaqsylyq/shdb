@@ -90,7 +90,7 @@ db=# \q - exit
 
 gcc -Wall -Wextra db.c -o db
 
-./db sql.db
+./db sql.db \n
 or
 ./db sql
 
