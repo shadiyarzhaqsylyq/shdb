@@ -56,7 +56,7 @@ output:
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
-SELECT * FROM products WHERE city = 'Dallas' OR city = 'New York;
+SELECT * FROM aircraft_fleet WHERE city = 'Dallas' OR city = 'New York;
 output:
 (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas')
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
@@ -64,41 +64,41 @@ output:
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
 
-SELECT * FROM products WHERE (city = 'Chicago' AND category = 'Regional') OR hoc < 10000;
+SELECT * FROM aircraft_fleet WHERE (city = 'Chicago' AND category = 'Regional') OR hoc < 10000;
 output:
 (1003, 'Embraer E190', 'Regional', 2900, 32, 'Chicago')
 (1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago')
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
 (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Atlanta')
 
-SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
+SELECT * FROM aircraft_fleet WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 output:
 
 
 
-UPDATE products SET city = 'Boston', price = 1000 WHERE product_id >= 106;
+UPDATE aircraft_fleet SET city = 'Boston', price = 1000 WHERE product_id >= 106;
 output:
 
 
 
 
-UPDATE products SET stock_quant = 1 WHERE stock_quant <= 50 AND (city = 'Chicago' OR city = 'New York');
+UPDATE aircraft_fleet SET stock_quant = 1 WHERE stock_quant <= 50 AND (city = 'Chicago' OR city = 'New York');
 output:
 
 
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
-DELETE FROM products WHERE product_id < 106;
+DELETE FROM aircraft_fleet WHERE product_id < 106;
 output:
 
 
 
-DELETE FROM products WHERE price > 50 OR city = 'Chicago';
+DELETE FROM aircraft_fleet WHERE price > 50 OR city = 'Chicago';
 output:
 
 
-DELETE FROM products WHERE product_id > 103 AND stock_quant > 1;
+DELETE FROM aircraft_fleet WHERE product_id > 103 AND stock_quant > 1;
 output:
 
 
