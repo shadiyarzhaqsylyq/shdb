@@ -84,7 +84,7 @@ output:
 
 
 
-UPDATE aircraft_fleet SET city = '', hoc = 1000 WHERE aircraft_code >= 106;
+UPDATE aircraft_fleet SET city = '', hoc = 20000 WHERE aircraft_code >= 1006;
 output:
 
 
