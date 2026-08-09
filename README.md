@@ -97,19 +97,19 @@ SELECT * FROM products WHERE (city = 'Miami' AND category = 'Electronics') OR pr
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 
 
-UPDATE products SET city = 'Miami', salary = 100000 WHERE id = 1;
-UPDATE products SET salary = 75000 WHERE id >= 3 AND (city = 'New York' OR city = 'Chicago');
+UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 1;
+UPDATE products SET salary = 75000 WHERE product_id >= 3 AND (city = 'New York' OR city = 'Chicago');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
-DELETE FROM products WHERE id < 6;
+DELETE FROM products WHERE product_id < 6;
 
 Add 2 rows again:
-INSERT INTO products VALUES (7, 'Jack', 110000, 'Eng', 'SF');
-INSERT INTO products VALUES (8, 'Sadie', 120000, 'Eng', 'Washington');
+INSERT INTO products VALUES ();
+INSERT INTO products VALUES ();
 
-DELETE FROM products WHERE id > 6 OR department = 'Sales';
+DELETE FROM products WHERE product_id > 6 OR department = '';
 
-DELETE FROM products WHERE id > 1 AND department = 'SE';
+DELETE FROM products WHERE product_id > 1 AND department = '';
 
 ```
 
