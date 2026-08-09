@@ -25,15 +25,15 @@ Operators - >=, <=, =, <, >
 CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hourly_operating_cost INT, active_fleet_count INT, primary_hub CHAR);
 
 INSERT INTO aircraft_fleet VALUES (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
-INSERT INTO aircraft_fleet VALUES (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'Frankfurt');
-INSERT INTO aircraft_fleet VALUES (1003, 'Embraer E190', 'Regional', 2900, 32, 'Denver');
+INSERT INTO aircraft_fleet VALUES (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London');
+INSERT INTO aircraft_fleet VALUES (1003, 'Embraer E190', 'Regional', 2900, 32, 'Chicago');
 INSERT INTO aircraft_fleet VALUES (1004, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London');
 INSERT INTO aircraft_fleet VALUES (1005, 'Airbus A320neo', 'Narrowbody', 3900, 60, 'Atlanta');
-INSERT INTO aircraft_fleet VALUES (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'Doha');
+INSERT INTO aircraft_fleet VALUES (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York');
 INSERT INTO aircraft_fleet VALUES (1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago');
-INSERT INTO aircraft_fleet VALUES (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Anchorage');
+INSERT INTO aircraft_fleet VALUES (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Atlanta');
 INSERT INTO aircraft_fleet VALUES (1009, 'Cessna Citation X', 'Private Jet', 4100, 12, 'New York');
-INSERT INTO aircraft_fleet VALUES (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Amsterdam');
+INSERT INTO aircraft_fleet VALUES (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas');
 
 
 SELECT * FROM aircraft_fleet;
