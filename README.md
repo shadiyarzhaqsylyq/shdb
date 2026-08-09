@@ -115,9 +115,10 @@ output:
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
-DELETE FROM aircraft_fleet WHERE product_id < 106;
+DELETE FROM aircraft_fleet WHERE active_fleet < 1;
 output:
-
+(1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 1, 'Dallas')
+(1002, 'Airbus A350-900', 'Widebody', 9800, 1, 'London')
 
 
 DELETE FROM aircraft_fleet WHERE price > 50 OR cityhub = 'Chicago';
