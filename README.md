@@ -135,6 +135,10 @@ output:
 (106, 'Blender', 'Appliances', 40, 60, 'Boston')
 
 DELETE FROM products WHERE price > 50 OR city = 'Chicago';
+output:
+(103, 'Desk Chair', 'Furniture', 40, 1, 'Miami')
+(105, 'Coffee Maker', 'Appliances', 40, 1, 'New York')
+(106, 'Blender', 'Appliances', 40, 60, 'Boston')
 
 DELETE FROM products WHERE product_id > 1 AND city = '';
 
