@@ -99,9 +99,18 @@ output:
 
 
 
-UPDATE aircraft_fleet SET active_fleet = 1 WHERE aircraft_code <= 1005 AND (cityhub = 'Chicago' OR cityhub = 'New York');
+UPDATE aircraft_fleet SET active_fleet = 1 WHERE aircraft_code <= 1002 AND (cityhub = 'London' OR cityhub = 'Dallas');
 output:
-
+(1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 1, 'Dallas')
+(1002, 'Airbus A350-900', 'Widebody', 9800, 1, 'London')
+(1003, 'Embraer E190', 'Regional', 2900, 32, 'Chicago')
+(1004, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London')
+(1005, 'Airbus A320neo', 'Narrowbody', 3900, 60, 'Atlanta')
+(1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
+(1007, 'Bombardier CRJ900', 'Regional', 20000, 25, 'Denver')
+(1008, 'Boeing 747-8F', 'Cargo Widebody', 20000, 10, 'Denver')
+(1009, 'Cessna Citation X', 'Private Jet', 20000, 12, 'Denver')
+(1010, 'Airbus A330-900neo', 'Widebody', 20000, 22, 'Denver')
 
 
 
