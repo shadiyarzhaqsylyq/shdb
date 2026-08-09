@@ -124,6 +124,9 @@ output:
 
 Update rows and try
 
+UPDATE products SET city = 'Boston', price = 1000 WHERE product_id >= 106;
+
+
 DELETE FROM products WHERE product_id > 6 OR city = '';
 
 DELETE FROM products WHERE product_id > 1 AND city = '';
