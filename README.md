@@ -50,17 +50,18 @@ output:
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
 
-SELECT * FROM products WHERE category = 'Widebody' AND aircraft_code > 1001;
+SELECT * FROM aircraft_fleet WHERE category = 'Widebody' AND aircraft_code > 1001;
 output:
 (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London')
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
-SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
+SELECT * FROM products WHERE city = 'Dallas' OR city = 'New York;
 output:
-
-
-
+(1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas')
+(1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
+(1009, 'Cessna Citation X', 'Private Jet', 4100, 12, 'New York')
+(1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
 SELECT * FROM products WHERE (city = 'SF' AND category = 'Fitness') OR stock_quant < 60;
 output:
