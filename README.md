@@ -22,8 +22,6 @@ VARCHAR, CHAR - default 32
 Operators - >=, <=, =, <, >
 ```
 
-CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR); or
-
 CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hourly_operating_cost INT, active_fleet_count INT, primary_hub CHAR);
 
 INSERT INTO aircraft_fleet VALUES (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
