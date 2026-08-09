@@ -99,7 +99,7 @@ output:
 
 
 
-UPDATE aircraft_fleet SET=1 WHERE<= 50 AND (cityhub = 'Chicago' OR cityhub = 'New York');
+UPDATE aircraft_fleet SET=1 WHERE active_fleet <= 50 AND (cityhub = 'Chicago' OR cityhub = 'New York');
 output:
 
 
