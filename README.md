@@ -28,14 +28,14 @@ CREATE TABLE products (product_id INT PRIMARY KEY, product_name CHAR, category C
 
 INSERT INTO products VALUES (101, 'Laptop', 'Electronics', 110, 10, 'New York');
 INSERT INTO products VALUES (102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
-INSERT INTO products VALUES (103, 'Headphones', 'Electronics', 130, 30, 'Miami');
-INSERT INTO products VALUES (104, 'Desk Chair', 'Furniture', 140, 40, 'Chicago');
-INSERT INTO products VALUES (105, 'Monitor', 'Electronics', 150, 50, 'New York');
-INSERT INTO products VALUES (106, 'Keyboard', 'Electronics', 160, 60, 'Miami');
-INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'SF');
-INSERT INTO products VALUES (109, 'Microwave', 'Appliances', 190, 90, 'LA');
-INSERT INTO products VALUES (110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
+INSERT INTO products VALUES (103, 'Desk Chair', 'Furniture', 130, 30, 'Miami');
+INSERT INTO products VALUES (104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
+INSERT INTO products VALUES (105, 'Coffee Maker', 'Appliances', 150, 50, 'New York');
+INSERT INTO products VALUES (106, 'Blender', 'Appliances', 160, 60, 'Miami');
+INSERT INTO products VALUES (107, 'Running Shoes', 'Footwear', 170, 70, 'LA');
+INSERT INTO products VALUES (108, 'Hiking Boots', 'Footwear', 180, 80, 'SF');
+INSERT INTO products VALUES (109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
+INSERT INTO products VALUES (110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
 
 
 SELECT * FROM products;
@@ -54,8 +54,7 @@ output:
 
 SELECT * FROM products WHERE category = 'Appliances' AND product_id > 107;
 output:
-(108, 'Blender', 'Appliances', 180, 80, 'SF');
-(109, 'Microwave', 'Appliances', 190, 90, 'LA');
+
 
 
 
