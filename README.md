@@ -88,7 +88,11 @@ output:
 
 UPDATE products SET city = 'SF', price = 1000 WHERE product_id <= 105;
 output:
-
+(101, 'Laptop', 'Electronics', 1000, 10, 'SF');
+(102, 'Smartphone', 'Electronics', 1000, 20, 'SF');
+(103, 'Desk Chair', 'Furniture', 1000, 30, 'SF');
+(104, 'Standing Desk', 'Furniture', 1000, 40, 'SF');
+(105, 'Coffee Maker', 'Appliances', 1000, 50, 'SF');
 
 
 
