@@ -108,12 +108,12 @@ output:
 DELETE: Filters and deletes matching rows by any custom column condition.
 DELETE FROM products WHERE product_id < 106;
 output:
-(101, 'Laptop', 'Electronics', 110, 10, 'New York')
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
-(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami')
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
-(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York')
-(106, 'Blender', 'Appliances', 160, 60, 'Miami')
+(101, 'Laptop', 'Electronics', 110, 1, 'New York')
+(102, 'Smartphone', 'Electronics', 120, 1, 'Chicago')
+(103, 'Desk Chair', 'Furniture', 130, 1, 'Miami')
+(104, 'Standing Desk', 'Furniture', 140, 1, 'Chicago')
+(105, 'Coffee Maker', 'Appliances', 150, 1, 'New York')
+(106, 'Blender', 'Appliances', 1000, 60, 'Boston')
 
 
 Add 2 rows again
