@@ -8,7 +8,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-// There will be something wrong when I Create Table, Insert Data, Quit and Save. When I open file, and use SELECT command it prints garbage.
+
 // ============================================================================
 // Data Types & Schema Definition
 // ============================================================================
