@@ -42,14 +42,15 @@ SELECT * FROM products;
 output:
 (101, 'Laptop', 'Electronics', 110, 10, 'New York');
 (102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
-(103, 'Headphones', 'Electronics', 130, 30, 'Miami');
-(104, 'Desk Chair', 'Furniture', 140, 40, 'Chicago');
-(105, 'Monitor', 'Electronics', 150, 50, 'New York');
-(106, 'Keyboard', 'Electronics', 160, 60, 'Miami');
-(107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-(108, 'Blender', 'Appliances', 180, 80, 'SF');
-(109, 'Microwave', 'Appliances', 190, 90, 'LA');
-(110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
+(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami');
+(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
+(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York');
+(106, 'Blender', 'Appliances', 160, 60, 'Miami');
+(107, 'Running Shoes', 'Footwear', 170, 70, 'LA');
+(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF');
+(109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
+
 
 
 SELECT * FROM products WHERE category = 'Appliances' AND product_id > 107;
@@ -60,36 +61,39 @@ output:
 
 SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
 output:
-(107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-(108, 'Blender', 'Appliances', 180, 80, 'SF');
-(109, 'Microwave', 'Appliances', 190, 90, 'LA');
-(110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
+
 
 
 
 SELECT * FROM products WHERE (city = 'LA' AND category = 'Appliances') OR stock_quant > 90;
 output:
-(107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-(109, 'Microwave', 'Appliances', 190, 90, 'LA');
-(110, 'Standing Desk', 'Furniture', 200, 100, 'SF');
+
 
 
 
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 output:
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
-(104, 'Desk Chair', 'Furniture', 140, 40, 'Chicago');
+
 
 
 UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 101;
+output:
+
+
+
+
 UPDATE products SET stock_quant = 1 WHERE product_id >= 106 AND (city = 'LA' OR city = 'SF');
+output:
+
+
 
 DELETE: Filters and deletes matching rows by any custom column condition.
 DELETE FROM products WHERE product_id < 106;
+output:
 
-Add 2 rows again:
-INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'SF');
+
+
+Add 2 rows again
 
 
 DELETE FROM products WHERE product_id > 6 OR city = '';
