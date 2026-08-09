@@ -82,10 +82,34 @@ INSERT INTO products VALUES (104, 'Desk Chair', 'Furniture', 250, 35, 'Chicago')
 INSERT INTO products VALUES (105, 'Monitor', 'Electronics', 350, 80, 'New York');
 INSERT INTO products VALUES (106, 'Keyboard', 'Electronics', 75, 150, 'Miami');
 INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 90, 60, 'LA');
-INSERT INTO products VALUES (108, 'Blender', 'Appliances', 60, 90, 'Washington');
+INSERT INTO products VALUES (108, 'Blender', 'Appliances', 60, 90, 'LA');
 
 SELECT * FROM products;
 
+SELECT * FROM products WHERE category = 'Electronics' AND product_id > 104;
+SELECT * FROM products WHERE city = 'New York' OR city = 'Chicago';
+
+
+
+
+SELECT * FROM products WHERE (city = 'LA' AND category = 'Appliences') OR price > 100;
+
+SELECT * FROM employees WHERE city = '' AND (category = 'SE' OR category = 'Sales');
+
+
+UPDATE employees SET city = 'Miami', salary = 100000 WHERE id = 1;
+UPDATE users SET salary = 75000 WHERE id >= 3 AND (city = 'New York' OR city = 'Chicago');
+
+DELETE: Filters and deletes matching rows by any custom column condition.
+DELETE FROM employees WHERE id < 6;
+
+Add 2 rows again:
+INSERT INTO employees VALUES (7, 'Jack', 110000, 'Eng', 'SF');
+INSERT INTO employees VALUES (8, 'Sadie', 120000, 'Eng', 'Washington');
+
+DELETE FROM employees WHERE id > 6 OR department = 'Sales';
+
+DELETE FROM employees WHERE id > 1 AND department = 'SE';
 
 ```
 
