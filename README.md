@@ -70,7 +70,11 @@ INSERT INTO users VALUES (102, 'bob@test.com', 35, 'Canada');
 Example3
 
 
-CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR);
+CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR); or
+
+CREATE TABLE products (product_id INT PRIMARY KEY, product_name CHAR, category CHAR, price INT, stock_quant INT, warehouse_city CHAR);
+
+
 INSERT INTO products VALUES (101, 'Laptop', 'Electronics', 1200, 45, 'New York');
 INSERT INTO products VALUES (102, 'Smartphone', 'Electronics', 800, 120, 'Chicago');
 INSERT INTO products VALUES (103, 'Headphones', 'Electronics', 150, 200, 'Miami');
