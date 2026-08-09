@@ -82,7 +82,8 @@ output:
 
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 output:
-
+(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
+(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
 
 
 UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 101;
