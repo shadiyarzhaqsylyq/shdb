@@ -24,131 +24,69 @@ Operators - >=, <=, =, <, >
 
 CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR); or
 
-CREATE TABLE products (product_id INT PRIMARY KEY, product_name CHAR, category CHAR, price INT, stock_quant INT, warehouse_city CHAR);
+CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hourly_operating_cost INT, active_fleet_count INT, primary_hub CHAR);
 
-
-INSERT INTO products VALUES (101, 'Laptop', 'Electronics', 110, 10, 'New York');
-INSERT INTO products VALUES (102, 'Smartphone', 'Electronics', 120, 20, 'Chicago');
-INSERT INTO products VALUES (103, 'Desk Chair', 'Furniture', 130, 30, 'Miami');
-INSERT INTO products VALUES (104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
-INSERT INTO products VALUES (105, 'Coffee Maker', 'Appliances', 150, 50, 'New York');
-INSERT INTO products VALUES (106, 'Blender', 'Appliances', 160, 60, 'Miami');
-INSERT INTO products VALUES (107, 'Running Shoes', 'Footwear', 170, 70, 'LA');
-INSERT INTO products VALUES (108, 'Hiking Boots', 'Footwear', 180, 80, 'SF');
-INSERT INTO products VALUES (109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
-INSERT INTO products VALUES (110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
+INSERT INTO aircraft_fleet VALUES (8841, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
+INSERT INTO aircraft_fleet VALUES (3102, 'Airbus A350-900', 'Widebody', 9800, 18, 'Frankfurt');
+INSERT INTO aircraft_fleet VALUES (6479, 'Embraer E190', 'Regional', 2900, 32, 'Denver');
+INSERT INTO aircraft_fleet VALUES (1923, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London');
+INSERT INTO aircraft_fleet VALUES (7054, 'Airbus A320neo', 'Narrowbody', 3900, 60, 'Atlanta');
+INSERT INTO aircraft_fleet VALUES (4281, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'Doha');
 
 
 SELECT * FROM products;
 output:
-(101, 'Laptop', 'Electronics', 110, 10, 'New York')
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
-(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami')
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
-(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York')
-(106, 'Blender', 'Appliances', 160, 60, 'Miami')
-(107, 'Running Shoes', 'Footwear', 170, 70, 'LA')
-(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF')
-(109, 'Dumbbells', 'Fitness', 190, 90, 'LA')
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
 
 
 
 SELECT * FROM products WHERE category = 'Fitness' AND product_id > 106;
 output:
-(109, 'Dumbbells', 'Fitness', 190, 90, 'LA')
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
+
 
 
 
 SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
 output:
-(107, 'Running Shoes', 'Footwear', 170, 70, 'LA')
-(108, 'Hiking Boots', 'Footwear', 180, 80, 'SF')
-(109, 'Dumbbells', 'Fitness', 190, 90, 'LA')
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
+
 
 
 
 SELECT * FROM products WHERE (city = 'SF' AND category = 'Fitness') OR stock_quant < 60;
 output:
-(101, 'Laptop', 'Electronics', 110, 10, 'New York')
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
-(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami')
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
-(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York')
-(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF')
+
 
 
 
 SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 output:
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
+
 
 
 UPDATE products SET city = 'Boston', price = 1000 WHERE product_id >= 106;
 output:
-(101, 'Laptop', 'Electronics', 110, 10, 'New York')
-(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
-(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami')
-(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
-(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York')
-(106, 'Blender', 'Appliances', 1000, 60, 'Boston')
-(107, 'Running Shoes', 'Footwear', 1000, 70, 'Boston')
-(108, 'Hiking Boots', 'Footwear', 1000, 80, 'Boston')
-(109, 'Dumbbells', 'Fitness', 1000, 90, 'Boston')
-(110, 'Yoga Mat', 'Fitness', 1000, 100, 'Boston')
+
 
 
 
 UPDATE products SET stock_quant = 1 WHERE stock_quant <= 50 AND (city = 'Chicago' OR city = 'New York');
 output:
-(101, 'Laptop', 'Electronics', 110, 1, 'New York')
-(102, 'Smartphone', 'Electronics', 120, 1, 'Chicago')
-(104, 'Standing Desk', 'Furniture', 140, 1, 'Chicago')
-(105, 'Coffee Maker', 'Appliances', 150, 1, 'New York')
-(106, 'Blender', 'Appliances', 1000, 60, 'Boston')
-(107, 'Running Shoes', 'Footwear', 1000, 70, 'Boston')
-(108, 'Hiking Boots', 'Footwear', 1000, 80, 'Boston')
-(109, 'Dumbbells', 'Fitness', 1000, 90, 'Boston')
-(110, 'Yoga Mat', 'Fitness', 1000, 100, 'Boston')
+
 
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
 DELETE FROM products WHERE product_id < 106;
 output:
-(101, 'Laptop', 'Electronics', 110, 1, 'New York')
-(102, 'Smartphone', 'Electronics', 120, 1, 'Chicago')
-(103, 'Desk Chair', 'Furniture', 130, 1, 'Miami')
-(104, 'Standing Desk', 'Furniture', 140, 1, 'Chicago')
-(105, 'Coffee Maker', 'Appliances', 150, 1, 'New York')
-(106, 'Blender', 'Appliances', 1000, 60, 'Boston')
 
 
-Update rows and try
-
-UPDATE products SET price = 40 WHERE product_id > 101;
-output:
-output:
-(101, 'Laptop', 'Electronics', 110, 1, 'New York')
-(102, 'Smartphone', 'Electronics', 40, 1, 'Chicago')
-(103, 'Desk Chair', 'Furniture', 40, 1, 'Miami')
-(104, 'Standing Desk', 'Furniture', 40, 1, 'Chicago')
-(105, 'Coffee Maker', 'Appliances', 40, 1, 'New York')
-(106, 'Blender', 'Appliances', 40, 60, 'Boston')
 
 DELETE FROM products WHERE price > 50 OR city = 'Chicago';
 output:
-(103, 'Desk Chair', 'Furniture', 40, 1, 'Miami')
-(105, 'Coffee Maker', 'Appliances', 40, 1, 'New York')
-(106, 'Blender', 'Appliances', 40, 60, 'Boston')
+
 
 DELETE FROM products WHERE product_id > 103 AND stock_quant > 1;
 output:
-(103, 'Desk Chair', 'Furniture', 40, 1, 'Miami')
-(105, 'Coffee Maker', 'Appliances', 40, 1, 'New York')
+
 
 ```
 
