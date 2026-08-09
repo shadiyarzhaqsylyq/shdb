@@ -140,7 +140,7 @@ output:
 (105, 'Coffee Maker', 'Appliances', 40, 1, 'New York')
 (106, 'Blender', 'Appliances', 40, 60, 'Boston')
 
-DELETE FROM products WHERE product_id > 1 AND city = '';
+DELETE FROM products WHERE product_id > 103 AND stock_quant = 1;
 
 ```
 
