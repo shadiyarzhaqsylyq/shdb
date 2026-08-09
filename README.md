@@ -1,7 +1,8 @@
 ## Educational database in C.
 
 
-cdb.c - There is something wrong when I Create Table, Insert Data, Quit? When I open file after quitting, and use SELECT command it prints garbage.
+cdb.c - There is something wrong when I Create Table, Insert Data, Quit? When I open file after quitting, and use SELECT command it prints garbage. it is corrected in cdbv2.c
+
 
 
 can use any column name, types
