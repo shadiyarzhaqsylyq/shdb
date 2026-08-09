@@ -56,12 +56,15 @@ output:
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
+
+
 SELECT * FROM aircraft_fleet WHERE city = 'Dallas' OR city = 'New York;
 output:
 (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas')
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
 (1009, 'Cessna Citation X', 'Private Jet', 4100, 12, 'New York')
 (1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
+
 
 
 SELECT * FROM aircraft_fleet WHERE (city = 'Chicago' AND category = 'Regional') OR hoc < 10000;
@@ -71,8 +74,13 @@ output:
 (1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago')
 (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Atlanta')
 
+
+
 SELECT * FROM aircraft_fleet WHERE city = 'London' AND (category = 'Widebody' OR category = 'Private Jet');
 output:
+(1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London')
+(1004, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London')
+
 
 
 
