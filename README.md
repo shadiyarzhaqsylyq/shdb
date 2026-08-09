@@ -98,7 +98,7 @@ SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR c
 
 
 UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 101;
-UPDATE products SET salary = 75000 WHERE product_id >= 3 AND (city = 'New York' OR city = 'Chicago');
+UPDATE products SET price = 1 WHERE product_id >= 104 AND (city = 'New York' OR city = 'Chicago');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
 DELETE FROM products WHERE product_id < 6;
