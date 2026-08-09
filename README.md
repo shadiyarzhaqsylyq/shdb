@@ -86,30 +86,30 @@ INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'LA');
 
 SELECT * FROM products;
 
-SELECT * FROM products WHERE category = 'Electronics' AND product_id > 104;
+SELECT * FROM products WHERE category = 'Appliances' AND product_id > 106;
 SELECT * FROM products WHERE city = 'New York' OR city = 'Chicago';
 
 
 
 
-SELECT * FROM products WHERE (city = 'LA' AND category = 'Appliences') OR price > 100;
+SELECT * FROM products WHERE (city = 'Miami' AND category = 'Electronics') OR price > 170;
 
-SELECT * FROM employees WHERE city = '' AND (category = 'SE' OR category = 'Sales');
+SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR category = 'Furniture');
 
 
-UPDATE employees SET city = 'Miami', salary = 100000 WHERE id = 1;
-UPDATE users SET salary = 75000 WHERE id >= 3 AND (city = 'New York' OR city = 'Chicago');
+UPDATE products SET city = 'Miami', salary = 100000 WHERE id = 1;
+UPDATE products SET salary = 75000 WHERE id >= 3 AND (city = 'New York' OR city = 'Chicago');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
-DELETE FROM employees WHERE id < 6;
+DELETE FROM products WHERE id < 6;
 
 Add 2 rows again:
-INSERT INTO employees VALUES (7, 'Jack', 110000, 'Eng', 'SF');
-INSERT INTO employees VALUES (8, 'Sadie', 120000, 'Eng', 'Washington');
+INSERT INTO products VALUES (7, 'Jack', 110000, 'Eng', 'SF');
+INSERT INTO products VALUES (8, 'Sadie', 120000, 'Eng', 'Washington');
 
-DELETE FROM employees WHERE id > 6 OR department = 'Sales';
+DELETE FROM products WHERE id > 6 OR department = 'Sales';
 
-DELETE FROM employees WHERE id > 1 AND department = 'SE';
+DELETE FROM products WHERE id > 1 AND department = 'SE';
 
 ```
 
