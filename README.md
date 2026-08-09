@@ -40,14 +40,14 @@ SELECT * FROM aircraft_fleet;
 output:
 (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas')
 (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London')
-(1003, 'Embraer E190', 'Regional', 2900, 32, 'New York')
+(1003, 'Embraer E190', 'Regional', 2900, 32, 'Chicago')
 (1004, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London')
 (1005, 'Airbus A320neo', 'Narrowbody', 3900, 60, 'Atlanta')
-(1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'Amsterdam')
-(1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Dallas')
+(1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
+(1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago')
 (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Atlanta')
 (1009, 'Cessna Citation X', 'Private Jet', 4100, 12, 'New York')
-(1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Amsterdam')
+(1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
 
 SELECT * FROM products WHERE category = 'Widebody' AND aircraft_code > 1001;
