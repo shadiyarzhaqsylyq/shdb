@@ -86,7 +86,7 @@ INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'LA');
 
 SELECT * FROM products;
 
-SELECT * FROM products WHERE category = 'Appliances' AND product_id > 106;
+SELECT * FROM products WHERE category = 'Appliances' AND product_id > 101;
 SELECT * FROM products WHERE city = 'New York' OR city = 'Chicago';
 
 
