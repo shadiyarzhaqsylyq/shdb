@@ -86,7 +86,7 @@ output:
 (104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago');
 
 
-UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 101;
+UPDATE products SET city = 'SF', price = 1000 WHERE product_id <= 105;
 output:
 
 
