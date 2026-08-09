@@ -53,9 +53,10 @@ output:
 
 
 
-SELECT * FROM products WHERE category = 'Appliances' AND product_id > 107;
+SELECT * FROM products WHERE category = 'Fitness' AND product_id > 106;
 output:
-
+(109, 'Dumbbells', 'Fitness', 190, 90, 'LA');
+(110, 'Yoga Mat', 'Fitness', 200, 100, 'SF');
 
 
 
