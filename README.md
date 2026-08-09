@@ -22,7 +22,7 @@ VARCHAR, CHAR - default 32
 Operators - >=, <=, =, <, >
 ```
 
-CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hoc INT, active_fleet INT, city CHAR);
+CREATE TABLE aircraft_fleet (aircraft_code INT PRIMARY KEY, model_name CHAR, category CHAR, hoc INT, active_fleet INT, cityhub CHAR);
 
 INSERT INTO aircraft_fleet VALUES (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
 INSERT INTO aircraft_fleet VALUES (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London');
@@ -58,7 +58,7 @@ output:
 
 
 
-SELECT * FROM aircraft_fleet WHERE city = 'Dallas' OR city = 'New York;
+SELECT * FROM aircraft_fleet WHERE cityhub = 'Dallas' OR cityhub = 'New York;
 output:
 (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas')
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
@@ -67,7 +67,7 @@ output:
 
 
 
-SELECT * FROM aircraft_fleet WHERE (city = 'Chicago' AND category = 'Regional') OR hoc < 10000;
+SELECT * FROM aircraft_fleet WHERE (cityhub = 'Chicago' AND category = 'Regional') OR hoc < 10000;
 output:
 (1003, 'Embraer E190', 'Regional', 2900, 32, 'Chicago')
 (1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
@@ -76,7 +76,7 @@ output:
 
 
 
-SELECT * FROM aircraft_fleet WHERE city = 'London' AND (category = 'Widebody' OR category = 'Private Jet');
+SELECT * FROM aircraft_fleet WHERE cityhub = 'London' AND (category = 'Widebody' OR category = 'Private Jet');
 output:
 (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London')
 (1004, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London')
@@ -84,13 +84,13 @@ output:
 
 
 
-UPDATE aircraft_fleet SET city = 'Denver', hoc = 20000 WHERE aircraft_code >= 1007;
+UPDATE aircraft_fleet SET cityhub = 'Denver', hoc = 20000 WHERE aircraft_code >= 1007;
 output:
 
 
 
 
-UPDATE aircraft_fleet SET=1 WHERE<= 50 AND (city = 'Chicago' OR city = 'New York');
+UPDATE aircraft_fleet SET=1 WHERE<= 50 AND (cityhub = 'Chicago' OR cityhub = 'New York');
 output:
 
 
@@ -102,7 +102,7 @@ output:
 
 
 
-DELETE FROM aircraft_fleet WHERE price > 50 OR city = 'Chicago';
+DELETE FROM aircraft_fleet WHERE price > 50 OR cityhub = 'Chicago';
 output:
 
 
