@@ -82,6 +82,20 @@ INSERT INTO products VALUES (108, 'Blender', 'Appliances', 60, 90, 'Washington')
 
 SELECT * FROM products;
 
+
+
+Example4
+
+CREATE TABLE books (id INT PRIMARY KEY, title CHAR, price INT, genre CHAR, author CHAR);
+
+INSERT INTO books VALUES (1, 'The Great Gatsby', 15, 'Fiction', 'F. Scott Fitzgerald');
+INSERT INTO books VALUES (2, '1984', 20, 'Sci-Fi', 'George Orwell');
+INSERT INTO books VALUES (3, 'To Kill a Mockingbird', 18, 'Fiction', 'Harper Lee');
+INSERT INTO books VALUES (4, 'Dune', 25, 'Sci-Fi', 'Frank Herbert');
+INSERT INTO books VALUES (5, 'Sapiens', 30, 'Non-Fiction', 'Yuval Noah Harari');
+INSERT INTO books VALUES (6, 'Atomic Habits', 22, 'Non-Fiction', 'James Clear');
+INSERT INTO books VALUES (7, 'The Hobbit', 16, 'Fantasy', 'J.R.R. Tolkien');
+INSERT INTO books VALUES (8, 'Harry Potter', 28, 'Fantasy', 'J.K. Rowling');
 ```
 
 
