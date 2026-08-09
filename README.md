@@ -33,7 +33,7 @@ INSERT INTO products VALUES (104, 'Desk Chair', 'Furniture', 140, 40, 'Chicago')
 INSERT INTO products VALUES (105, 'Monitor', 'Electronics', 150, 50, 'New York');
 INSERT INTO products VALUES (106, 'Keyboard', 'Electronics', 160, 60, 'Miami');
 INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'LA');
+INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'SF');
 
 SELECT * FROM products;
 
@@ -49,14 +49,14 @@ SELECT * FROM products WHERE city = 'Chicago' AND (category = 'Electronics' OR c
 
 
 UPDATE products SET city = 'SF', price = 1000 WHERE product_id = 101;
-UPDATE products SET stock_quant = 1 WHERE product_id >= 104 AND (city = 'New York' OR city = 'Miami');
+UPDATE products SET stock_quant = 1 WHERE product_id >= 106 AND (city = 'LA' OR city = 'SF');
 
 DELETE: Filters and deletes matching rows by any custom column condition.
 DELETE FROM products WHERE product_id < 106;
 
 Add 2 rows again:
 INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 170, 70, 'LA');
-INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'LA');
+INSERT INTO products VALUES (108, 'Blender', 'Appliances', 180, 80, 'SF');
 
 
 DELETE FROM products WHERE product_id > 6 OR department = '';
