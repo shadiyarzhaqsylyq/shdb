@@ -71,15 +71,14 @@ Example3
 
 
 CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR);
-
-INSERT INTO products VALUES (101, 'Laptop', 'Electronics', 999.99, 45, 'Seattle');
-INSERT INTO products VALUES (102, 'Desk Chair', 'Furniture', 150.00, 120, 'Austin');
-INSERT INTO products VALUES (103, 'Monitor', 'Electronics', 299.50, 85, 'Seattle');
-INSERT INTO products VALUES (104, 'Coffee Maker', 'Appliances', 79.99, 200, 'Denver');
-INSERT INTO products VALUES (105, 'Standing Desk', 'Furniture', 450.00, 30, 'Austin');
-INSERT INTO products VALUES (106, 'Wireless Mouse', 'Electronics', 25.00, 350, 'Seattle');
-INSERT INTO products VALUES (107, 'Blender', 'Appliances', 60.00, 90, 'Denver');
-INSERT INTO products VALUES (108, 'Mechanical Keyboard', 'Electronics', 110.00, 150, 'Boston');
+INSERT INTO products VALUES (101, 'Laptop', 'Electronics', 1200, 45, 'New York');
+INSERT INTO products VALUES (102, 'Smartphone', 'Electronics', 800, 120, 'Chicago');
+INSERT INTO products VALUES (103, 'Headphones', 'Electronics', 150, 200, 'Miami');
+INSERT INTO products VALUES (104, 'Desk Chair', 'Furniture', 250, 35, 'Chicago');
+INSERT INTO products VALUES (105, 'Monitor', 'Electronics', 350, 80, 'New York');
+INSERT INTO products VALUES (106, 'Keyboard', 'Electronics', 75, 150, 'Miami');
+INSERT INTO products VALUES (107, 'Coffee Maker', 'Appliances', 90, 60, 'SF');
+INSERT INTO products VALUES (108, 'Blender', 'Appliances', 60, 90, 'Washington');
 
 ```
 
