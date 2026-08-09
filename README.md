@@ -89,6 +89,11 @@ output:
 
 UPDATE products SET city = 'Boston', price = 1000 WHERE product_id >= 106;
 output:
+(101, 'Laptop', 'Electronics', 110, 10, 'New York')
+(102, 'Smartphone', 'Electronics', 120, 20, 'Chicago')
+(103, 'Desk Chair', 'Furniture', 130, 30, 'Miami')
+(104, 'Standing Desk', 'Furniture', 140, 40, 'Chicago')
+(105, 'Coffee Maker', 'Appliances', 150, 50, 'New York')
 (106, 'Blender', 'Appliances', 1000, 60, 'Boston')
 (107, 'Running Shoes', 'Footwear', 1000, 70, 'Boston')
 (108, 'Hiking Boots', 'Footwear', 1000, 80, 'Boston')
