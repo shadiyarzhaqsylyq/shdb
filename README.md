@@ -124,10 +124,11 @@ output:
 
 Update rows and try
 
-UPDATE products SET price = 10 WHERE product_id = 106;
+UPDATE products SET price = 40 WHERE product_id = 105;
+UPDATE products SET price = 40 WHERE product_id = 105;
 
 
-DELETE FROM products WHERE product_id > 6 OR city = '';
+DELETE FROM products WHERE price > 50 OR city = 'Boston';
 
 DELETE FROM products WHERE product_id > 1 AND city = '';
 
