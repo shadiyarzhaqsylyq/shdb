@@ -52,9 +52,9 @@ output:
 
 SELECT * FROM products WHERE category = 'Widebody' AND aircraft_code > 1001;
 output:
-(1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'Frankfurt')
-(1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'Doha')
-
+(1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London')
+(1006, 'Boeing 777-300ER', 'Widebody', 11500, 14, 'New York')
+(1010, 'Airbus A330-900neo', 'Widebody', 8900, 22, 'Dallas')
 
 SELECT * FROM products WHERE city = 'LA' OR city = 'SF';
 output:
