@@ -86,7 +86,10 @@ output:
 
 UPDATE aircraft_fleet SET cityhub = 'Denver', hoc = 20000 WHERE aircraft_code >= 1007;
 output:
-
+(1007, 'Bombardier CRJ900', 'Regional', 20000, 25, 'Denver')
+(1008, 'Boeing 747-8F', 'Cargo Widebody', 20000, 10, 'Denver')
+(1009, 'Cessna Citation X', 'Private Jet', 20000, 12, 'Denver')
+(1010, 'Airbus A330-900neo', 'Widebody', 20000, 22, 'Denver')
 
 
 
