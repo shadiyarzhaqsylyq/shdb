@@ -71,7 +71,7 @@ output:
 (1007, 'Bombardier CRJ900', 'Regional', 3100, 25, 'Chicago')
 (1008, 'Boeing 747-8F', 'Cargo Widebody', 14200, 10, 'Atlanta')
 
-SELECT * FROM aircraft_fleet WHERE city = 'Chicago' AND (category = '' OR category = '');
+SELECT * FROM aircraft_fleet WHERE city = 'London' AND (category = 'Widebody' OR category = 'Private Jet');
 output:
 
 
