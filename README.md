@@ -19,6 +19,7 @@ supported types
 VARCHAR(N), STRING(N), CHAR(N), INT, INTEGER
 
 VARCHAR, CHAR - default 32
+Operators - >=, <=, =, <, >
 ```
 
 CREATE TABLE products (product_id INT PRIMARY KEY, product_name VARCHAR, category VARCHAR, price INT, stock_quant INT, warehouse_city VARCHAR); or
