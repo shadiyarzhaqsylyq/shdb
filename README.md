@@ -103,6 +103,12 @@ output:
 (102, 'Smartphone', 'Electronics', 120, 1, 'Chicago')
 (104, 'Standing Desk', 'Furniture', 140, 1, 'Chicago')
 (105, 'Coffee Maker', 'Appliances', 150, 1, 'New York')
+(106, 'Blender', 'Appliances', 1000, 60, 'Boston')
+(107, 'Running Shoes', 'Footwear', 1000, 70, 'Boston')
+(108, 'Hiking Boots', 'Footwear', 1000, 80, 'Boston')
+(109, 'Dumbbells', 'Fitness', 1000, 90, 'Boston')
+(110, 'Yoga Mat', 'Fitness', 1000, 100, 'Boston')
+
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
