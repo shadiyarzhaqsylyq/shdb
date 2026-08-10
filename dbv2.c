@@ -29,6 +29,8 @@
 #define MAX_TOKENS 256
 #define MAX_ASSIGNMENTS 32
 
+#define WAL_CHECKPOINT_THRESHOLD 50  // Checkpoint WAL after this many committed records
+
 // Buffer Pool Frame
 typedef struct {
     uint32_t page_num;
@@ -58,6 +60,7 @@ typedef struct {
     int wal_fd;
     char wal_filename[256];
     uint32_t current_tx_id;
+    uint32_t records_since_checkpoint; // Tracks WAL growth to trigger checkpointing
 } Wal;
 
 typedef enum {
@@ -704,6 +707,7 @@ Wal* wal_open(const char* db_filename) {
     snprintf(wal->wal_filename, sizeof(wal->wal_filename), "%s.wal", db_filename);
     wal->wal_fd = open(wal->wal_filename, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR);
     wal->current_tx_id = 1;
+    wal->records_since_checkpoint = 0;
     return wal;
 }
 
@@ -718,6 +722,8 @@ void wal_log_record(Wal* wal, WalRecordType type, uint32_t page_num, const void*
     if (hdr.page_size > 0 && page_data != NULL) {
         write(wal->wal_fd, page_data, PAGE_SIZE);
     }
+
+    wal->records_since_checkpoint++;
 }
 
 void wal_log_page(Wal* wal, uint32_t page_num, const void* page_data) {
@@ -730,12 +736,65 @@ void wal_commit(Wal* wal) {
     wal->current_tx_id++;
 }
 
-// CRASH RECOVERY: Replay committed WAL transactions on startup
+
+
+// Returns true once enough WAL records have piled up that it's worth checkpointing.
+bool wal_should_checkpoint(Wal* wal) {
+    return wal->records_since_checkpoint >= WAL_CHECKPOINT_THRESHOLD;
+}
+
+// CHECKPOINT: Push everything the WAL describes durably into the DB file,
+// then truncate the WAL back to empty.
+//
+// Why this is safe: once a page's contents are fsync'd into the main DB file,
+// the WAL's copy of that page is redundant -- recovery would just rewrite the
+// same bytes that are already there. So after an fsync of the DB file, we can
+// safely discard (truncate) everything currently in the WAL.
+//
+// Only call this when there is no in-flight (uncommitted) transaction.
+void wal_checkpoint(Pager* pager) {
+    Wal* wal = pager->wal;
+    if (wal == NULL) return;
+
+    // 1. Flush any dirty pages still sitting in the buffer pool to the DB file.
+    //    (pager_flush() WAL-logs a page before writing it, so this stays safe
+    //    even if some of these pages were never explicitly flushed before.)
+    for (int i = 0; i < BUFFER_POOL_SIZE; i++) {
+        Frame* frame = &pager->frames[i];
+        if (frame->is_dirty && frame->page_num != INVALID_PAGE_NUM) {
+            pager_flush(pager, frame->page_num);
+        }
+    }
+
+    // 2. Force the DB file's contents to physical disk. Only once this succeeds
+    //    do we actually know it's safe to throw away the WAL's copy of the data.
+    if (fsync(pager->file_descriptor) == -1) {
+        printf("Warning: fsync on db file failed during checkpoint: %d\n", errno);
+        return; // Do NOT truncate the WAL if durability isn't confirmed
+    }
+
+    // 3. Truncate the WAL file to zero length and rewind the write cursor.
+    if (ftruncate(wal->wal_fd, 0) == -1) {
+        printf("Warning: WAL truncate failed during checkpoint: %d\n", errno);
+        return;
+    }
+    lseek(wal->wal_fd, 0, SEEK_SET);
+
+    wal->records_since_checkpoint = 0;
+}
+
+
+
+
+
+
+
 void wal_recover(Pager* pager, Wal* wal) {
     lseek(wal->wal_fd, 0, SEEK_SET);
     WalHeader hdr;
 
     uint8_t buffer[PAGE_SIZE];
+    bool replayed_anything = false;
     while (read(wal->wal_fd, &hdr, sizeof(WalHeader)) == sizeof(WalHeader)) {
         if (hdr.type == WAL_REC_PAGE_WRITE) {
             read(wal->wal_fd, buffer, PAGE_SIZE);
@@ -743,9 +802,22 @@ void wal_recover(Pager* pager, Wal* wal) {
             // Replay write to main database file
             off_t offset = (off_t)hdr.page_num * PAGE_SIZE;
             pwrite(pager->file_descriptor, buffer, PAGE_SIZE, offset);
+            replayed_anything = true;
         }
     }
+
+    // The DB file now already contains everything the WAL held, so make that
+    // durable and clear the WAL out -- otherwise it would just keep growing
+    // across restarts and old records would linger indefinitely.
+    if (replayed_anything) {
+        fsync(pager->file_descriptor);
+    }
+    if (ftruncate(wal->wal_fd, 0) == 0) {
+        lseek(wal->wal_fd, 0, SEEK_SET);
+    }
+    wal->records_since_checkpoint = 0;
 }
+
 
 void wal_close(Wal* wal) {
     if (wal->wal_fd != -1) close(wal->wal_fd);
@@ -818,6 +890,11 @@ void table_close(Table* table) {
         }
     }
 
+    // Checkpoint: fsync the DB file and truncate the WAL so we shut down "clean"
+    if (table->pager->wal) {
+        wal_checkpoint(table->pager);
+    }
+
     // Close WAL logging file handle
     if (table->pager->wal) {
         wal_close(table->pager->wal);
@@ -826,6 +903,9 @@ void table_close(Table* table) {
     pager_close(table->pager);
     free(table);
 }
+
+
+
 
 uint32_t get_node_max_key(Table* table, void* node) {
     if (get_node_type(node) == NODE_LEAF) {
@@ -1836,9 +1916,17 @@ ExecuteResult execute_commit(Table* table) {
     // 2. Append COMMIT record to WAL log and sync file to disk
     wal_commit(table->pager->wal);
 
+    // 3. Periodically checkpoint so the WAL file doesn't grow forever.
+    //    Safe here because we're between transactions (no tx in flight).
+    if (wal_should_checkpoint(table->pager->wal)) {
+        wal_checkpoint(table->pager);
+    }
+
     table->in_transaction = false;
     return EXECUTE_SUCCESS;
 }
+
+
 
 ExecuteResult execute_rollback(Table* table) {
     if (!table->in_transaction) {
