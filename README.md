@@ -86,7 +86,7 @@ SELECT output:
 
 
 
-DELETE FROM table WHERE a > b OR c;
+DELETE FROM table WHERE a > '' OR c > '';
 SELECT output:
 
 
