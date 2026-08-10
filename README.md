@@ -115,6 +115,11 @@ SELECT output:
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
+DELETE from aircraft_fleet WHERE aircraft_code > 1001;
+SELECT output:
+(1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 1, 'Dallas')
+UPDATE
+
 
 INSERT INTO aircraft_fleet VALUES (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
 INSERT INTO aircraft_fleet VALUES (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London');
