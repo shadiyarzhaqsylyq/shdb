@@ -19,17 +19,16 @@
 #define SCHEMA_MAGIC 0x5343484D
 
 // ============================================================================
-// Buffer Pool & WAL Configuration, WAL truncation, checkpoint
+// Buffer Pool & WAL Configuration
 // ============================================================================
 #define BUFFER_POOL_SIZE 64  // Fixed number of page frames in RAM
+#define WAL_CHECKPOINT_THRESHOLD 50  // Checkpoint WAL after this many committed records
 
 #define MAX_COLUMNS 32
 #define MAX_NAME_LEN 64
 #define MAX_STR_LEN 256
 #define MAX_TOKENS 256
 #define MAX_ASSIGNMENTS 32
-
-#define WAL_CHECKPOINT_THRESHOLD 50  // Checkpoint WAL after this many committed records
 
 // Buffer Pool Frame
 typedef struct {
@@ -736,8 +735,6 @@ void wal_commit(Wal* wal) {
     wal->current_tx_id++;
 }
 
-
-
 // Returns true once enough WAL records have piled up that it's worth checkpointing.
 bool wal_should_checkpoint(Wal* wal) {
     return wal->records_since_checkpoint >= WAL_CHECKPOINT_THRESHOLD;
@@ -783,12 +780,7 @@ void wal_checkpoint(Pager* pager) {
     wal->records_since_checkpoint = 0;
 }
 
-
-
-
-
-
-
+// CRASH RECOVERY: Replay committed WAL transactions on startup
 void wal_recover(Pager* pager, Wal* wal) {
     lseek(wal->wal_fd, 0, SEEK_SET);
     WalHeader hdr;
@@ -817,7 +809,6 @@ void wal_recover(Pager* pager, Wal* wal) {
     }
     wal->records_since_checkpoint = 0;
 }
-
 
 void wal_close(Wal* wal) {
     if (wal->wal_fd != -1) close(wal->wal_fd);
@@ -903,9 +894,6 @@ void table_close(Table* table) {
     pager_close(table->pager);
     free(table);
 }
-
-
-
 
 uint32_t get_node_max_key(Table* table, void* node) {
     if (get_node_type(node) == NODE_LEAF) {
@@ -1925,8 +1913,6 @@ ExecuteResult execute_commit(Table* table) {
     table->in_transaction = false;
     return EXECUTE_SUCCESS;
 }
-
-
 
 ExecuteResult execute_rollback(Table* table) {
     if (!table->in_transaction) {
