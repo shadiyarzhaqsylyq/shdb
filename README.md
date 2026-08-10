@@ -69,28 +69,28 @@ SELECT output:
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
-DELETE from aircraft_fleet WHERE aircraft_code > 1001;
+DELETE from table WHERE a > '';
 SELECT output:
 
 
-UPDATE aircraft_fleet SET active_fleet = 45 WHERE aircraft_code = 1001;
-SELECT output:
-
-
-
-
-
-
-DELETE FROM aircraft_fleet WHERE active_fleet < 30;
+UPDATE table SET a = 45 WHERE b = 1001;
 SELECT output:
 
 
 
-DELETE FROM + WHERE + > + OR +;
+
+
+
+DELETE FROM table WHERE a < 30;
 SELECT output:
 
 
-DELETE FROM + WHERE + > + AND +;
+
+DELETE FROM table WHERE a > b OR c;
+SELECT output:
+
+
+DELETE FROM table WHERE a > 10 AND c > 30;
 SELECT output:
 
 
