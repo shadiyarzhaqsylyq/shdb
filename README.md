@@ -164,13 +164,15 @@ SELECT output:
 
 
 
+Implemented - Buffer Pool Manager, WA/Recovery
 
 
-Not Implemented catalog (tables, schemas, indexes), Buffer Pool Manager, LRU-K Replacer, Disk Scheduler, disk manager, WAL/recovery, query optimizer, executor.
+Not Implemented catalog (tables, schemas, indexes),LRU-K Replacer, Disk Scheduler, disk manager, query optimizer, executor.
 
 
 
 db=# \d - prints Tree
+
 
 db=# \q - exit
 
@@ -182,6 +184,8 @@ db=# \q - exit
 
 gcc -Wall -Wextra db.c -o db
 
+
 ./db sql.db
+
 
 ./db sql
