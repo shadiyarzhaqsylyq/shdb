@@ -19,7 +19,7 @@
 #define SCHEMA_MAGIC 0x5343484D
 
 // ============================================================================
-// Buffer Pool & WAL Configuration
+// Buffer Pool & WAL Configuration, WAL truncation, checkpoint
 // ============================================================================
 #define BUFFER_POOL_SIZE 64  // Fixed number of page frames in RAM
 
