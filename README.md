@@ -124,7 +124,6 @@ SELECT output:
 (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas')
 
 
-INSERT INTO aircraft_fleet VALUES (1001, 'Boeing 737 MAX 8', 'Narrowbody', 4200, 45, 'Dallas');
 INSERT INTO aircraft_fleet VALUES (1002, 'Airbus A350-900', 'Widebody', 9800, 18, 'London');
 INSERT INTO aircraft_fleet VALUES (1003, 'Embraer E190', 'Regional', 2900, 32, 'Chicago');
 INSERT INTO aircraft_fleet VALUES (1004, 'Gulfstream G650', 'Private Jet', 5600, 8, 'London');
