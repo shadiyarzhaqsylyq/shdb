@@ -36,25 +36,26 @@ INSERT INTO table VALUES (8, 'Hannah O.', 'IT', 17200, '8708-444-3322', 'Miami')
 
 
 SELECT * FROM table;
+SELECT * FROM table WHERE a = '';
 SELECT * FROM table WHERE a = '' AND b > '';
 SELECT * FROM table WHERE a = '' OR b = '';
-SELECT * FROM table WHERE (a = '' AND b = '') OR c < 10000;
+SELECT * FROM table WHERE (a = '' AND b = '') OR c < '';
 SELECT * FROM table WHERE a = '' AND (b = '' OR c = '');
 
 
 
 UPDATE table SET a = '', b = '' WHERE c >= '';
-UPDATE table SET a = 1 WHERE b <= 1002 AND (c = '' OR d = '');
+UPDATE table SET a = 1 WHERE b <= '' AND (c = '' OR d = '');
 
 
 
 
 
 DELETE from table WHERE a > '';
-UPDATE table SET a = 45 WHERE b = 1001;
-DELETE FROM table WHERE a < 30;
-DELETE FROM table WHERE a > b OR c = '';
-DELETE FROM table WHERE a > 10 AND c > 30;
+DELETE FROM table WHERE a < '';
+DELETE FROM table WHERE a > '' OR c = '';
+DELETE FROM table WHERE a > '' AND c > '';
+
 
 
 
