@@ -1,5 +1,5 @@
 /*
- * db_fixed.c – corrected version of the educational B+tree database.
+ * corrected version 
  *
  * Key fixes applied:
  *  1. WAL recovery now only replays page images belonging to *committed*
