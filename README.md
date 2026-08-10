@@ -28,70 +28,65 @@ INSERT INTO table VALUES ();
 
 
 SELECT * FROM table;
-output:
 
 
 
-SELECT * FROM table WHERE a = '' AND b > 1001;
-output:
+SELECT * FROM table WHERE a = '' AND b > '';
 
 
 
 
 SELECT * FROM table WHERE a = '' OR b = '';
-output:
 
 
 
 
-SELECT * FROM table WHERE (a = '' AND b = '') OR c < 10000;
-output:
+
+SELECT * FROM table WHERE (a = '' AND b = '') OR c < '';
+
 
 
 
 
 SELECT * FROM table WHERE a = '' AND (b = '' OR c = '');
-output:
 
 
-
-UDPATE
 
 UPDATE table SET a = '', b = '' WHERE c >= '';
-SELECT output:
+
 
 
 
 
 UPDATE table SET a = 1 WHERE b <= 1002 AND (c = '' OR d = '');
-SELECT output:
+
 
 
 
 DELETE: Filters and deletes matching rows by any custom column condition.
 DELETE from table WHERE a > '';
-SELECT output:
 
 
-UPDATE table SET a = 45 WHERE b = 1001;
-SELECT output:
 
-
+UPDATE table SET a = '' WHERE b = '';
 
 
 
 
-DELETE FROM table WHERE a < 30;
-SELECT output:
+
+
+
+DELETE FROM table WHERE a < '';
+
 
 
 
 DELETE FROM table WHERE a > '' OR c > '';
-SELECT output:
 
 
-DELETE FROM table WHERE a > 10 AND c > 30;
-SELECT output:
+
+DELETE FROM table WHERE a > '' AND c > '';
+
 
 
 ```
