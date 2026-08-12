@@ -23,6 +23,7 @@ Operators - >=, <=, =, <, >, !=, <>
 ```
 
 
+
 *CREATE*
 CREATE TABLE table (id INT PRIMARY KEY, name VARCHAR, did VARCHAR, dep VARCHAR, salary INT, city VARCHAR);
 
@@ -32,9 +33,12 @@ INSERT INTO table VALUES (2, 'Bob', '1010A-1001b', 'IT', 18500, 'LA');
 INSERT INTO table VALUES (3, 'Charlie', '2020B-2001c', 'HR', 14000, 'SF');
 INSERT INTO table VALUES (4, 'Diana', '2020B-2002d', 'Finance', 21000, 'Chicago');
 INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 13500, 'SF');
-INSERT INTO table VALUES (6, 'Fiona', '3030C-3002f', 'Engineering', 16800, 'Chicago');
-INSERT INTO table VALUES (7, 'George', '4040D-4001g', 'Finance', 19500, 'NY');
-INSERT INTO table VALUES (8, 'Hannah', '4040D-4002h', 'IT', 17200, 'Miami');
+output:
+(1, 'Alice', '1010A-1001a', 'Engineering', 12000, 'NY')
+(2, 'Bob', '1010A-1001b', 'IT', 18500, 'LA')
+(3, 'Charlie', '2020B-2001c', 'HR', 14000, 'SF')
+(4, 'Diana', '2020B-2002d', 'Finance', 21000, 'Chicago')
+(5, 'Evan', '3030C-3001e', 'HR', 13500, 'SF')
 
 
 
@@ -100,6 +104,7 @@ INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 3000, 'Miami');
 
 
 DELETE FROM table WHERE salary > 1000 AND (city = 'LA' OR city = 'SF');
+
 
 
 ```
