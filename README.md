@@ -22,6 +22,16 @@ Operators - >=, <=, =, <, >, !=, <>
 != and <> have the same meaning "not equal to".
 ```
 
+*CREATE*
+CREATE TABLE table (id INT PRIMARY KEY, name VARCHAR, did VARCHAR, dep VARCHAR, salary INT, city VARCHAR);
+
+*INSERT*
+INSERT INTO table VALUES (1, 'Alice', '1010A-1001a', 'Engineering', 12000, 'NY');
+INSERT INTO table VALUES (2, 'Bob', '1010A-1001b', 'IT', 18500, 'LA');
+INSERT INTO table VALUES (3, 'Charlie', '2020B-2001c', 'HR', 14000, 'SF');
+INSERT INTO table VALUES (4, 'Diana', '2020B-2002d', 'Finance', 21000, 'Chicago');
+INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 13500, 'SF');
+
 
 
 *CREATE*
@@ -45,35 +55,36 @@ output:
 
 *SELECT*
 SELECT * FROM table;
-SELECT * FROM table WHERE city = 'SF';
+SELECT * FROM table WHERE city = '';
 
 Not supported
-SELECT * FROM table WHERE a = '' AND b > 10000;
+SELECT * FROM table WHERE a = '' AND b > '';
 SELECT * FROM table WHERE a = '' OR city = '';
-SELECT * FROM table WHERE (a = '' AND b = 'SF') OR c < 3;
-SELECT * FROM table WHERE a = '' AND (b = 'c' OR d = '');
+SELECT * FROM table WHERE (a = '' AND b = '') OR c < '';
+SELECT * FROM table WHERE a = '' AND (b = '' OR d = '');
 
 
 
 *Update*
-UPDATE table SET name = 'Gordon', did = 'xxxx-xxxx' WHERE id >= 4;
+UPDATE table SET a = '', b = '' WHERE c >= '';
 
 Not supported
-UPDATE table SET salary = 99999 WHERE salary <= 10000 AND (dep = 'Engineering' OR dep = 'Finance');
+UPDATE table SET a = '' WHERE b <= '' AND (c = '' OR d = '');
 
 
 
 
 *DELETE*
-DELETE FROM table WHERE id > 1;
-DELETE FROM table WHERE id < 5;
+DELETE FROM table WHERE id > '';
+DELETE FROM table WHERE id < '';
 
 Not supported
-DELETE FROM table WHERE city = 'SF' OR city = 'NY';
-DELETE FROM table WHERE city = 'SF' AND dep = 'HR';
-DELETE FROM table WHERE salary >= 10000 AND dep = 'HR';
-DELETE FROM table WHERE (dep = 'HR' AND city = 'SF') OR salary <= 100;
-DELETE FROM table WHERE salary > 1000 AND (city = 'LA' OR city = 'SF');
+DELETE FROM table WHERE a = '' OR city = 'b';
+DELETE FROM table WHERE a = '' AND b = 'HR';
+DELETE FROM table WHERE a >= '' AND b = '';
+DELETE FROM table WHERE (a = '' AND b = '') OR c <= '';
+DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
+
 
 
 
