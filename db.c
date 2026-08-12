@@ -24,12 +24,12 @@
 #define MAX_TOKENS 256
 #define MAX_ASSIGNMENTS 32
 
-typedef enum {
+typedef enum DataType {
     DATA_TYPE_INT = 0,
     DATA_TYPE_VARCHAR = 1
 } DataType;
 
-typedef struct {
+typedef struct ColumnDef {
     char name[MAX_NAME_LEN];
     DataType type;
     uint32_t length; // For VARCHAR length; 0 for INT
@@ -38,7 +38,7 @@ typedef struct {
     bool is_primary_key;
 } ColumnDef;
 
-typedef struct {
+typedef struct Schema {
     bool has_schema;
     char table_name[MAX_NAME_LEN];
     ColumnDef columns[MAX_COLUMNS];
@@ -98,13 +98,13 @@ static int schema_find_column(const Schema* schema, const char* name) {
 // Dynamic Value & Row Structures
 // ============================================================================
 
-typedef struct {
+typedef struct Value {
     DataType type;
     int32_t int_val;
     char str_val[MAX_STR_LEN];
 } Value;
 
-typedef struct {
+typedef struct DynamicRow {
     Value values[MAX_COLUMNS];
     uint32_t num_values;
 } DynamicRow;
@@ -116,7 +116,7 @@ static uint32_t get_pk_value(const DynamicRow* row, const Schema* schema) {
     return 0;
 }
 
-typedef enum {
+typedef enum ExecuteResult {
     EXECUTE_SUCCESS,
     EXECUTE_DUPLICATE_KEY,
     EXECUTE_NOT_FOUND,
@@ -125,12 +125,12 @@ typedef enum {
     EXECUTE_TABLE_FULL
 } ExecuteResult;
 
-typedef enum {
+typedef enum MetaCommandResult {
     META_COMMAND_SUCCESS,
     META_COMMAND_UNRECOGNIZED_COMMAND
 } MetaCommandResult;
 
-typedef enum {
+typedef enum PrepareResult {
     PREPARE_SUCCESS,
     PREPARE_NEGATIVE_ID,
     PREPARE_STRING_TOO_LONG,
@@ -138,7 +138,7 @@ typedef enum {
     PREPARE_UNRECOGNIZED_STATEMENT
 } PrepareResult;
 
-typedef enum {
+typedef enum StatementType {
     STATEMENT_INSERT,
     STATEMENT_SELECT,
     STATEMENT_UPDATE,
@@ -149,16 +149,16 @@ typedef enum {
     STATEMENT_ROLLBACK
 } StatementType;
 
-typedef enum {
+// Only the five comparison operators are supported (no !=, no <>).
+typedef enum WhereOp {
     WHERE_OP_EQ,
-    WHERE_OP_NE,
     WHERE_OP_GT,
     WHERE_OP_LT,
     WHERE_OP_GE,
     WHERE_OP_LE
 } WhereOp;
 
-typedef enum {
+typedef enum NodeType {
     NODE_INTERNAL = 0,
     NODE_LEAF = 1
 } NodeType;
@@ -217,95 +217,61 @@ void print_row(const DynamicRow* row, const Schema* schema) {
 }
 
 // ============================================================================
-// WHERE-clause AST Structures & Evaluation
+// WHERE-clause Structures & Evaluation
+// (Simplified: a single comparison only -- no AND / OR combinators.)
 // ============================================================================
 
-typedef struct {
+typedef struct Literal {
     bool is_string;
     uint32_t int_value;
     char str_value[MAX_STR_LEN];
 } Literal;
 
-typedef enum {
-    EXPR_COMPARISON,
-    EXPR_LOGICAL
-} ExprType;
-
-typedef enum {
-    LOGIC_AND,
-    LOGIC_OR
-} LogicOp;
-
 typedef struct Expr {
-    ExprType type;
-    union {
-        struct {
-            char column[MAX_NAME_LEN];
-            WhereOp op;
-            Literal value;
-        } cmp;
-        struct {
-            LogicOp op;
-            struct Expr* left;
-            struct Expr* right;
-        } logical;
-    };
+    char column[MAX_NAME_LEN];
+    WhereOp op;
+    Literal value;
 } Expr;
 
 void free_expr(Expr* expr) {
     if (!expr) return;
-    if (expr->type == EXPR_LOGICAL) {
-        free_expr(expr->logical.left);
-        free_expr(expr->logical.right);
-    }
     free(expr);
 }
 
 bool evaluate_expr(const Expr* expr, const DynamicRow* row, const Schema* schema) {
     if (!expr) return true;
 
-    if (expr->type == EXPR_COMPARISON) {
-        int col_idx = schema_find_column(schema, expr->cmp.column);
-        if (col_idx < 0 || (uint32_t)col_idx >= row->num_values) return false;
+    int col_idx = schema_find_column(schema, expr->column);
+    if (col_idx < 0 || (uint32_t)col_idx >= row->num_values) return false;
 
-        const ColumnDef* col_def = &schema->columns[col_idx];
-        const Value* cell_val = &row->values[col_idx];
+    const ColumnDef* col_def = &schema->columns[col_idx];
+    const Value* cell_val = &row->values[col_idx];
 
-        int cmp = 0;
-        if (col_def->type == DATA_TYPE_INT) {
-            int32_t v = (int32_t)expr->cmp.value.int_value;
-            cmp = (cell_val->int_val > v) - (cell_val->int_val < v);
-        } else {
-            int c = strcmp(cell_val->str_val, expr->cmp.value.str_value);
-            cmp = (c > 0) - (c < 0);
-        }
-
-        switch (expr->cmp.op) {
-            case WHERE_OP_EQ: return cmp == 0;
-            case WHERE_OP_NE: return cmp != 0;
-            case WHERE_OP_GT: return cmp > 0;
-            case WHERE_OP_LT: return cmp < 0;
-            case WHERE_OP_GE: return cmp >= 0;
-            case WHERE_OP_LE: return cmp <= 0;
-        }
-        return false;
-    } else { // EXPR_LOGICAL
-        if (expr->logical.op == LOGIC_AND) {
-            return evaluate_expr(expr->logical.left, row, schema) &&
-                   evaluate_expr(expr->logical.right, row, schema);
-        } else {
-            return evaluate_expr(expr->logical.left, row, schema) ||
-                   evaluate_expr(expr->logical.right, row, schema);
-        }
+    int cmp = 0;
+    if (col_def->type == DATA_TYPE_INT) {
+        int32_t v = (int32_t)expr->value.int_value;
+        cmp = (cell_val->int_val > v) - (cell_val->int_val < v);
+    } else {
+        int c = strcmp(cell_val->str_val, expr->value.str_value);
+        cmp = (c > 0) - (c < 0);
     }
+
+    switch (expr->op) {
+        case WHERE_OP_EQ: return cmp == 0;
+        case WHERE_OP_GT: return cmp > 0;
+        case WHERE_OP_LT: return cmp < 0;
+        case WHERE_OP_GE: return cmp >= 0;
+        case WHERE_OP_LE: return cmp <= 0;
+    }
+    return false;
 }
 
-typedef struct {
+typedef struct UpdateAssignment {
     char column_name[MAX_NAME_LEN];
     char value_text[MAX_STR_LEN];
 } UpdateAssignment;
 
-typedef struct {
+typedef struct Statement {
     StatementType type;
     DynamicRow row_to_insert;
     char table_name[MAX_NAME_LEN];
@@ -447,7 +413,7 @@ static inline void* leaf_node_value(void* node, uint32_t cell_num, uint32_t row_
 // Pager Structure & Functions (Updated with pread/pwrite)
 // ============================================================================
 
-typedef struct {
+typedef struct Pager {
     int file_descriptor;
     uint32_t file_length;
     uint32_t num_pages;
@@ -555,7 +521,7 @@ typedef struct Table {
     bool tx_was_cached[TABLE_MAX_PAGES];
 } Table;
 
-typedef struct {
+typedef struct Cursor {
     Table* table;
     uint32_t page_num;
     uint32_t cell_num;
@@ -585,7 +551,7 @@ void tx_free_backups(Table* table) {
     }
 }
 
-typedef struct {
+typedef struct MetaPage {
     uint32_t magic;
     uint32_t root_page_num;
     Schema schema;
@@ -851,7 +817,7 @@ void internal_node_split_and_insert(Table* table, uint32_t parent_page_num, uint
 
     uint32_t splitting_root = is_node_root(old_node);
     void* parent;
-    void* new_node;
+    void* new_node = NULL;
 
     if (splitting_root) {
         create_new_root(table, new_page_num);
@@ -1006,7 +972,7 @@ void print_tree(Table* table, uint32_t page_num, uint32_t indentation_level) {
 // SQL Lexer & Parser
 // ============================================================================
 
-typedef enum {
+typedef enum TokenKind {
     TOKEN_IDENTIFIER,
     TOKEN_STRING_LITERAL,
     TOKEN_NUMBER,
@@ -1014,12 +980,12 @@ typedef enum {
     TOKEN_END
 } TokenKind;
 
-typedef struct {
+typedef struct Token {
     TokenKind kind;
     char text[MAX_STR_LEN];
 } Token;
 
-typedef struct {
+typedef struct TokenList {
     Token tokens[MAX_TOKENS];
     uint32_t count;
     uint32_t cursor;
@@ -1061,10 +1027,11 @@ void tokenize_input(const char* input, TokenList* list) {
             continue;
         }
 
+        // Only two-character operators still supported are <= and >=.
+        // (!= and <> are intentionally not recognized.)
         if (pos + 1 < len) {
             char op2[3] = {input[pos], input[pos + 1], '\0'};
-            if (strcmp(op2, "!=") == 0 || strcmp(op2, "<=") == 0 ||
-                strcmp(op2, ">=") == 0 || strcmp(op2, "<>") == 0) {
+            if (strcmp(op2, "<=") == 0 || strcmp(op2, ">=") == 0) {
                 list->tokens[list->count].kind = TOKEN_SYMBOL;
                 strcpy(list->tokens[list->count].text, op2);
                 list->count++;
@@ -1131,8 +1098,8 @@ static bool match_token(TokenList* list, const char* text) {
     return false;
 }
 
-PrepareResult parse_or_expr(TokenList* list, const Schema* schema, Expr** out);
-
+// Parses a single comparison: <column> <op> <value>
+// There is no AND / OR support -- a WHERE clause is exactly one comparison.
 PrepareResult parse_comparison(TokenList* list, const Schema* schema, Expr** out) {
     Token col = advance_token(list);
     Token op = advance_token(list);
@@ -1144,22 +1111,20 @@ PrepareResult parse_comparison(TokenList* list, const Schema* schema, Expr** out
     if (col_idx < 0) return PREPARE_SYNTAX_ERROR;
 
     Expr* cmp = (Expr*)calloc(1, sizeof(Expr));
-    cmp->type = EXPR_COMPARISON;
-    strncpy(cmp->cmp.column, schema->columns[col_idx].name, MAX_NAME_LEN - 1);
+    strncpy(cmp->column, schema->columns[col_idx].name, MAX_NAME_LEN - 1);
 
-    if (strcmp(op.text, "=") == 0) cmp->cmp.op = WHERE_OP_EQ;
-    else if (strcmp(op.text, "!=") == 0 || strcmp(op.text, "<>") == 0) cmp->cmp.op = WHERE_OP_NE;
-    else if (strcmp(op.text, ">=") == 0) cmp->cmp.op = WHERE_OP_GE;
-    else if (strcmp(op.text, "<=") == 0) cmp->cmp.op = WHERE_OP_LE;
-    else if (strcmp(op.text, ">") == 0) cmp->cmp.op = WHERE_OP_GT;
-    else if (strcmp(op.text, "<") == 0) cmp->cmp.op = WHERE_OP_LT;
+    if (strcmp(op.text, "=") == 0) cmp->op = WHERE_OP_EQ;
+    else if (strcmp(op.text, ">=") == 0) cmp->op = WHERE_OP_GE;
+    else if (strcmp(op.text, "<=") == 0) cmp->op = WHERE_OP_LE;
+    else if (strcmp(op.text, ">") == 0) cmp->op = WHERE_OP_GT;
+    else if (strcmp(op.text, "<") == 0) cmp->op = WHERE_OP_LT;
     else {
         free(cmp);
         return PREPARE_SYNTAX_ERROR;
     }
 
     if (schema->columns[col_idx].type == DATA_TYPE_INT) {
-        cmp->cmp.value.is_string = false;
+        cmp->value.is_string = false;
         char* endptr;
         long int_v = strtol(val.text, &endptr, 10);
         if (*endptr != '\0') {
@@ -1170,81 +1135,19 @@ PrepareResult parse_comparison(TokenList* list, const Schema* schema, Expr** out
             free(cmp);
             return PREPARE_NEGATIVE_ID;
         }
-        cmp->cmp.value.int_value = (uint32_t)int_v;
+        cmp->value.int_value = (uint32_t)int_v;
     } else {
-        cmp->cmp.value.is_string = true;
-        strncpy(cmp->cmp.value.str_value, val.text, MAX_STR_LEN - 1);
+        cmp->value.is_string = true;
+        strncpy(cmp->value.str_value, val.text, MAX_STR_LEN - 1);
     }
 
     *out = cmp;
     return PREPARE_SUCCESS;
 }
 
-PrepareResult parse_primary(TokenList* list, const Schema* schema, Expr** out) {
-    if (strcmp(peek_token(list).text, "(") == 0) {
-        advance_token(list);
-        PrepareResult res = parse_or_expr(list, schema, out);
-        if (res != PREPARE_SUCCESS) return res;
-        if (strcmp(peek_token(list).text, ")") != 0) return PREPARE_SYNTAX_ERROR;
-        advance_token(list);
-        return PREPARE_SUCCESS;
-    }
-    return parse_comparison(list, schema, out);
-}
-
-PrepareResult parse_and_expr(TokenList* list, const Schema* schema, Expr** out) {
-    Expr* left = NULL;
-    PrepareResult res = parse_primary(list, schema, &left);
-    if (res != PREPARE_SUCCESS) return res;
-
-    while (strcasecmp_custom(peek_token(list).text, "and") == 0) {
-        advance_token(list);
-        Expr* right = NULL;
-        res = parse_primary(list, schema, &right);
-        if (res != PREPARE_SUCCESS) {
-            free_expr(left);
-            return res;
-        }
-        Expr* logical = (Expr*)calloc(1, sizeof(Expr));
-        logical->type = EXPR_LOGICAL;
-        logical->logical.op = LOGIC_AND;
-        logical->logical.left = left;
-        logical->logical.right = right;
-        left = logical;
-    }
-
-    *out = left;
-    return PREPARE_SUCCESS;
-}
-
-PrepareResult parse_or_expr(TokenList* list, const Schema* schema, Expr** out) {
-    Expr* left = NULL;
-    PrepareResult res = parse_and_expr(list, schema, &left);
-    if (res != PREPARE_SUCCESS) return res;
-
-    while (strcasecmp_custom(peek_token(list).text, "or") == 0) {
-        advance_token(list);
-        Expr* right = NULL;
-        res = parse_and_expr(list, schema, &right);
-        if (res != PREPARE_SUCCESS) {
-            free_expr(left);
-            return res;
-        }
-        Expr* logical = (Expr*)calloc(1, sizeof(Expr));
-        logical->type = EXPR_LOGICAL;
-        logical->logical.op = LOGIC_OR;
-        logical->logical.left = left;
-        logical->logical.right = right;
-        left = logical;
-    }
-
-    *out = left;
-    return PREPARE_SUCCESS;
-}
-
 PrepareResult parse_where_clause(TokenList* list, const Schema* schema, Statement* statement) {
     if (!match_token(list, "WHERE")) return PREPARE_SUCCESS;
-    return parse_or_expr(list, schema, &statement->where);
+    return parse_comparison(list, schema, &statement->where);
 }
 
 PrepareResult prepare_statement(TokenList* list, const Schema* schema, Statement* statement) {
@@ -1369,7 +1272,7 @@ PrepareResult prepare_statement(TokenList* list, const Schema* schema, Statement
         return PREPARE_SUCCESS;
     }
 
-    // SELECT [* | COUNT(*)] FROM <table> [WHERE ...]
+    // SELECT [* | COUNT(*)] FROM <table> [WHERE <col> <op> <val>]
     if (strcasecmp_custom(first.text, "select") == 0) {
         advance_token(list);
         statement->type = STATEMENT_SELECT;
@@ -1391,7 +1294,7 @@ PrepareResult prepare_statement(TokenList* list, const Schema* schema, Statement
         return parse_where_clause(list, schema, statement);
     }
 
-    // UPDATE <table> SET col1 = val1 [, col2 = val2] [WHERE ...]
+    // UPDATE <table> SET col1 = val1 [, col2 = val2] [WHERE <col> <op> <val>]
     if (strcasecmp_custom(first.text, "update") == 0) {
         advance_token(list);
         statement->type = STATEMENT_UPDATE;
@@ -1420,7 +1323,7 @@ PrepareResult prepare_statement(TokenList* list, const Schema* schema, Statement
         return parse_where_clause(list, schema, statement);
     }
 
-    // DELETE FROM <table> [WHERE ...]
+    // DELETE FROM <table> [WHERE <col> <op> <val>]
     if (strcasecmp_custom(first.text, "delete") == 0) {
         advance_token(list);
         statement->type = STATEMENT_DELETE;
@@ -1467,14 +1370,29 @@ ExecuteResult execute_insert(Statement* statement, Table* table) {
     return EXECUTE_SUCCESS;
 }
 
+// Holds one matched row's before/after state while execute_update figures out
+// whether it can be rewritten in place or needs to be relocated in the tree.
+typedef struct PendingUpdate {
+    uint32_t old_key;
+    uint32_t new_key;
+    DynamicRow row;
+} PendingUpdate;
+
 ExecuteResult execute_update(Statement* statement, Table* table) {
+    // Phase 1: scan the whole table (read-only) and compute the post-update
+    // row for every match, WITHOUT touching the tree yet.
+    uint32_t capacity = 16;
+    PendingUpdate* pending = (PendingUpdate*)malloc(capacity * sizeof(PendingUpdate));
+    uint32_t pending_count = 0;
+
     Cursor* cursor = table_start(table);
     DynamicRow row;
-    uint32_t count = 0;
 
     while (!cursor->end_of_table) {
         deserialize_row(cursor_value(cursor), &row, &table->schema);
         if (row_matches_where(&row, statement, &table->schema)) {
+            uint32_t old_key = get_pk_value(&row, &table->schema);
+
             for (uint32_t i = 0; i < statement->num_update_assignments; i++) {
                 UpdateAssignment* assign = &statement->update_assignments[i];
                 int col_idx = schema_find_column(&table->schema, assign->column_name);
@@ -1486,18 +1404,83 @@ ExecuteResult execute_update(Statement* statement, Table* table) {
                     }
                 }
             }
-            serialize_row(&row, cursor_value(cursor), &table->schema);
-            count++;
+
+            if (pending_count == capacity) {
+                capacity *= 2;
+                pending = (PendingUpdate*)realloc(pending, capacity * sizeof(PendingUpdate));
+            }
+            pending[pending_count].old_key = old_key;
+            pending[pending_count].new_key = get_pk_value(&row, &table->schema);
+            pending[pending_count].row = row;
+            pending_count++;
         }
         cursor_advance(cursor);
     }
     free(cursor);
-    printf("UPDATE %u\n", count);
+
+    // Phase 2: apply the changes.
+    uint32_t applied = 0;
+    uint32_t skipped_duplicates = 0;
+
+    for (uint32_t i = 0; i < pending_count; i++) {
+        PendingUpdate* u = &pending[i];
+
+        if (u->new_key == u->old_key) {
+            // Primary key unchanged: overwrite value bytes in place.
+            Cursor* c = table_find(table, u->old_key);
+            void* node = pager_get_page(table->pager, c->page_num);
+            uint32_t num_cells = *leaf_node_num_cells(node);
+            if (c->cell_num < num_cells &&
+                *leaf_node_key(node, c->cell_num, table->schema.row_size) == u->old_key) {
+                serialize_row(&u->row, cursor_value(c), &table->schema);
+                applied++;
+            }
+            free(c);
+            continue;
+        }
+
+        // Primary key changed: delete old cell and re-insert under new key.
+        Cursor* dest = table_find(table, u->new_key);
+        void* dest_node = pager_get_page(table->pager, dest->page_num);
+        uint32_t dest_num_cells = *leaf_node_num_cells(dest_node);
+        bool duplicate = (dest->cell_num < dest_num_cells &&
+                           *leaf_node_key(dest_node, dest->cell_num, table->schema.row_size) == u->new_key);
+        free(dest);
+
+        if (duplicate) {
+            skipped_duplicates++;
+            continue;
+        }
+
+        Cursor* old_cursor = table_find(table, u->old_key);
+        void* old_node = pager_get_page(table->pager, old_cursor->page_num);
+        uint32_t old_num_cells = *leaf_node_num_cells(old_node);
+        if (old_cursor->cell_num < old_num_cells &&
+            *leaf_node_key(old_node, old_cursor->cell_num, table->schema.row_size) == u->old_key) {
+            leaf_node_delete(old_cursor);
+            free(old_cursor);
+
+            Cursor* insert_cursor = table_find(table, u->new_key);
+            leaf_node_insert(insert_cursor, u->new_key, &u->row);
+            free(insert_cursor);
+            applied++;
+        } else {
+            free(old_cursor);
+        }
+    }
+
+    free(pending);
+
+    if (skipped_duplicates > 0) {
+        printf("UPDATE %u (skipped %u due to duplicate key)\n", applied, skipped_duplicates);
+    } else {
+        printf("UPDATE %u\n", applied);
+    }
     return EXECUTE_SUCCESS;
 }
 
 ExecuteResult execute_delete(Statement* statement, Table* table) {
-    uint32_t keys_to_delete[PAGE_SIZE]; // Temporary execution key buffer
+    static uint32_t keys_to_delete[PAGE_SIZE]; // Temporary execution key buffer
     uint32_t delete_count = 0;
 
     Cursor* cursor = table_start(table);
@@ -1621,7 +1604,7 @@ ExecuteResult execute_statement(Statement* statement, Table* table) {
             return execute_update(statement, table);
         case STATEMENT_DELETE:
             return execute_delete(statement, table);
-        case STATEMENT_CREATE:
+        case STATEMENT_CREATE: {
             table->schema = statement->created_schema;
 
             // Persist schema changes to Page 0 metadata
@@ -1636,6 +1619,7 @@ ExecuteResult execute_statement(Statement* statement, Table* table) {
             set_node_root(root_node, true);
             printf("CREATE TABLE (%u columns configured)\n", table->schema.num_columns);
             return EXECUTE_SUCCESS;
+        }
         case STATEMENT_BEGIN:
             return execute_begin(table);
         case STATEMENT_COMMIT:
@@ -1654,10 +1638,11 @@ void print_help(void) {
     printf("SQL Commands:\n"
            "  CREATE TABLE <name> (<pk_col> INT PRIMARY KEY, <col2> VARCHAR(32), <col3> INT, ...);\n"
            "  INSERT INTO <name> VALUES (<val1>, '<val2>', ...);\n"
-           "  SELECT * FROM <name> [WHERE <col> = <val>];\n"
-           "  SELECT COUNT(*) FROM <name> [WHERE <col> = <val>];\n"
-           "  UPDATE <name> SET <col> = <val> WHERE <col> = <val>;\n"
-           "  DELETE FROM <name> WHERE <col> = <val>;\n"
+           "  SELECT * FROM <name> [WHERE <col> <op> <val>];\n"
+           "  SELECT COUNT(*) FROM <name> [WHERE <col> <op> <val>];\n"
+           "  UPDATE <name> SET <col> = <val> WHERE <col> <op> <val>;\n"
+           "  DELETE FROM <name> WHERE <col> <op> <val>;\n"
+           "  (WHERE supports a single comparison only: =, <, >, <=, >=. No AND / OR.)\n"
            "  BEGIN; | COMMIT; | ROLLBACK;\n"
            "Meta commands:\n"
            "  \\q or .exit      quit the shell\n"
