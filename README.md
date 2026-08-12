@@ -1,11 +1,7 @@
-## Educational database in C.
+## Educational database in C/C++.
+## C++ db does not have transactions, !=, <>
 
 
-cdb.c - There is something wrong when I Create Table, Insert Data, Quit? When I open file after quitting, and use SELECT command it prints garbage. it is corrected in cdbv2.c
-
-
-
-can use any column name, types
 
 
 1 file 1 table
@@ -19,7 +15,7 @@ supported types
 VARCHAR(N), STRING(N), CHAR(N), INT, INTEGER
 
 VARCHAR, CHAR - default 32
-Operators - >=, <=, =, <, >
+Operators - >=, <=, =, <, >, !=, <>
 ```
 
 
@@ -120,7 +116,7 @@ db=# \q - exit
 
 
 
-# C
+# C(db.c)
 
 
 gcc -Wall -Wextra db.c -o db
@@ -128,5 +124,14 @@ gcc -Wall -Wextra db.c -o db
 
 ./db sql.db
 
+
+./db sql
+
+
+# C++(dbv2.cpp)
+
+g++ -Wall -Wextra .cpp -o db
+
+./db sql.db
 
 ./db sql
