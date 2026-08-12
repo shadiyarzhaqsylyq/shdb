@@ -108,7 +108,7 @@ DELETE FROM table WHERE salary > 1000 AND (city = 'LA' OR city = 'SF');
 
 
 
-Implemented - Buffer Pool Manager, WA/Recovery
+Implemented - Buffer Pool Manager, WAL/Recovery, Catalog, LRU-K replacer, Disk Scheduler, Disk Manager, query optimizer, executor.
 
 
 Not Implemented catalog (tables, schemas, indexes),LRU-K Replacer, Disk Scheduler, disk manager, query optimizer, executor.
