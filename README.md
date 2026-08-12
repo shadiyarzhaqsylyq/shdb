@@ -15,7 +15,11 @@ supported types
 VARCHAR(N), STRING(N), CHAR(N), INT, INTEGER
 
 VARCHAR, CHAR - default 32
-Operators - >=, <=, =, <, >, != and <> - not equal
+
+
+Operators - >=, <=, =, <, >, !=, <>
+
+!= and <> have the same meaning "not equal to".
 ```
 
 
