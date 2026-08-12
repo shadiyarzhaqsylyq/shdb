@@ -1,5 +1,5 @@
 ## Educational database in C/C++.
-## C++ db does not have transactions, !=, <>, AND and OR commands.
+
 
 
 
