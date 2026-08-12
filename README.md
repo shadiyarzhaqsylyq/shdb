@@ -46,63 +46,33 @@ output:
 *SELECT*
 SELECT * FROM table;
 SELECT * FROM table WHERE city = 'SF';
-SELECT * FROM table WHERE city = 'NY' AND salary > 10000;
-SELECT * FROM table WHERE city = 'Miami' OR city = 'SF';
-SELECT * FROM table WHERE (dep = 'HR' AND city = 'SF') OR id < 3;
-SELECT * FROM table WHERE city = 'NY' AND (dep = 'Engineering' OR dep = 'Finance');
+
+Not supported
+SELECT * FROM table WHERE a = '' AND b > 10000;
+SELECT * FROM table WHERE a = '' OR city = '';
+SELECT * FROM table WHERE (a = '' AND b = 'SF') OR c < 3;
+SELECT * FROM table WHERE a = '' AND (b = 'c' OR d = '');
 
 
 
 *Update*
-
-Example1
-INSERT INTO table VALUES (1, 'Alice', '1010A-1001a', 'Finance', 9000, 'NY');
-INSERT INTO table VALUES (2, 'Bob', '1010A-1001b', 'IT', 8500, 'LA');
-INSERT INTO table VALUES (3, 'Charlie', '2020B-2001c', 'HR', 4000, 'SF');
-INSERT INTO table VALUES (4, 'Diana', '2020B-2002d', 'Engineering', 18000, 'Chicago');
-INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 13500, 'SF');
-
 UPDATE table SET name = 'Gordon', did = 'xxxx-xxxx' WHERE id >= 4;
+
+Not supported
 UPDATE table SET salary = 99999 WHERE salary <= 10000 AND (dep = 'Engineering' OR dep = 'Finance');
 
 
 
 
 *DELETE*
-
-Example1
-INSERT INTO table VALUES (1, 'Alice', '1010A-1001a', 'Finance', 9000, 'NY');
-INSERT INTO table VALUES (2, 'Bob', '1010A-1001b', 'IT', 8500, 'LA');
-INSERT INTO table VALUES (3, 'Charlie', '2020B-2001c', 'HR', 14000, 'SF');
-INSERT INTO table VALUES (4, 'Diana', '2020B-2002d', 'Engineering', 21000, 'Chicago');
-INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 13500, 'SF');
-
-
 DELETE FROM table WHERE id > 1;
 DELETE FROM table WHERE id < 5;
+
+Not supported
 DELETE FROM table WHERE city = 'SF' OR city = 'NY';
 DELETE FROM table WHERE city = 'SF' AND dep = 'HR';
 DELETE FROM table WHERE salary >= 10000 AND dep = 'HR';
-
-
-Example2
-INSERT INTO table VALUES (1, 'Alice', '1010A-1001a', 'Finance', 10000, 'NY');
-INSERT INTO table VALUES (2, 'Bob', '1010A-1001b', 'IT', 10, 'LA');
-INSERT INTO table VALUES (3, 'Charlie', '2020B-2001c', 'HR', 1000, 'SF');
-INSERT INTO table VALUES (4, 'Diana', '2020B-2002d', 'Engineering', 10, 'Chicago');
-INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 1000, 'SF');
-
 DELETE FROM table WHERE (dep = 'HR' AND city = 'SF') OR salary <= 100;
-
-
-Example3
-INSERT INTO table VALUES (1, 'Alice', '1010A-1001a', 'Finance', 100, 'NY');
-INSERT INTO table VALUES (2, 'Bob', '1010A-1001b', 'IT', 100, 'LA');
-INSERT INTO table VALUES (3, 'Charlie', '2020B-2001c', 'HR', 2000, 'SF');
-INSERT INTO table VALUES (4, 'Diana', '2020B-2002d', 'Engineering', 21000, 'LA');
-INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 3000, 'Miami');
-
-
 DELETE FROM table WHERE salary > 1000 AND (city = 'LA' OR city = 'SF');
 
 
