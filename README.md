@@ -1,5 +1,5 @@
 ## Educational database in C/C++.
-## C++ db does not have transactions, !=, <>
+## C++ db does not have transactions, !=, <>, AND and OR commands.
 
 
 
@@ -15,7 +15,7 @@ supported types
 VARCHAR(N), STRING(N), CHAR(N), INT, INTEGER
 
 VARCHAR, CHAR - default 32
-Operators - >=, <=, =, <, >, !=, <>
+Operators - >=, <=, =, <, >, != and <> - not equal
 ```
 
 
