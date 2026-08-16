@@ -237,8 +237,26 @@ void EnumerateCmpRec(DPhyp *dp, BitSet S1, BitSet S2, BitSet X) {
 }
 
 // Section 3.3: Seeds complements for connected subgraph S1
+
+/*
+
+// Portable C99 count-trailing-zeros for 64-bit integers
+static inline int count_trailing_zeros64(uint64_t v) {
+    if (v == 0) return 64;
+    int count = 0;
+    if ((v & 0xFFFFFFFFULL) == 0) { count += 32; v >>= 32; }
+    if ((v & 0xFFFFULL) == 0)     { count += 16; v >>= 16; }
+    if ((v & 0xFFULL) == 0)       { count += 8;  v >>= 8;  }
+    if ((v & 0xFULL) == 0)        { count += 4;  v >>= 4;  }
+    if ((v & 0x3ULL) == 0)        { count += 2;  v >>= 2;  }
+    if ((v & 0x1ULL) == 0)        { count += 1;            }
+    return count;
+}
+
+
+*/
 void EmitCsg(DPhyp *dp, BitSet S1) {
-    int min_s1_idx = __builtin_ctzll(S1);
+    int min_s1_idx = __builtin_ctzll(S1); //or count_trailing_zeros64(S1)
     BitSet B_min_s1 = (1ULL << (min_s1_idx + 1)) - 1;
     BitSet X = S1 | B_min_s1;
 
