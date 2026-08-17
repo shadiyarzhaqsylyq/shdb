@@ -297,3 +297,22 @@ main :: proc() {
 		fmt.printf("  - %-10s %-10s%s\n", col.name, col.data_type, pk_str)
 	}
 }
+/*
+output:
+Input SQL:
+CREATE TABLE table (id INT PRIMARY KEY, name VARCHAR, did VARCHAR, dep VARCHAR, salary INT, city VARCHAR);
+
+--------------------------------------------------
+
+Successfully Parsed Statement!
+Table Name: table
+Columns:
+  - id         INT        [PRIMARY KEY]
+  - name       VARCHAR   
+  - did        VARCHAR   
+  - dep        VARCHAR   
+  - salary     INT       
+  - city       VARCHAR   
+
+
+*/
