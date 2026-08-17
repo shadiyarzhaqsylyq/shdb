@@ -9,10 +9,11 @@
 
 Flexible Primary Key - user_id INT PRIMARY KEY or product_code INT PRIMARY KEY
 
+Types
 
-supported types
 
 VARCHAR(N), STRING(N), CHAR(N), INT, INTEGER
+
 
 VARCHAR, CHAR - default 32
 
@@ -38,7 +39,6 @@ INSERT INTO table VALUES (5, 'Evan', '3030C-3001e', 'HR', 13500, 'SF');
 SELECT * FROM table;
 SELECT * FROM table WHERE city = '';
 
-Not supported
 SELECT * FROM table WHERE a = '' AND b > '';
 SELECT * FROM table WHERE a = '' OR city = '';
 SELECT * FROM table WHERE (a = '' AND b = '') OR c < '';
