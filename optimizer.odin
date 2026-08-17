@@ -311,3 +311,22 @@ main :: proc() {
         fmt.println("No valid plan found for the graph.")
     }
 }
+/*
+output:
+Optimal Plan Found!
++ Join (Total Cost: 324.82)
+  + Join (Total Cost: 90.30)
+    + Join (Total Cost: 43.00)
+      - Relation R1 (Cost: 10.00)
+      - Relation R2 (Cost: 20.00)
+    - Relation R3 (Cost: 30.00)
+  + Join (Total Cost: 195.90)
+    + Join (Total Cost: 109.00)
+      - Relation R4 (Cost: 40.00)
+      - Relation R5 (Cost: 50.00)
+    - Relation R6 (Cost: 60.00)
+
+
+
+
+*/
