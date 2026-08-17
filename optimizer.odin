@@ -264,9 +264,7 @@ print_plan :: proc(dp: ^DPhyp, subset: u64, depth: int) {
     }
 }
 
-/* =========================================================================
- * Main Program: Example from Figure 2 in the paper
- * ========================================================================= */
+
 
 main :: proc() {
     dp: DPhyp
