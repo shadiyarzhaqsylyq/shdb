@@ -9,7 +9,16 @@ MAX_NODES :: 64
 // =========================================================================
 // Logical Join Types & Physical Operators
 // =========================================================================
+/*
+ADD
 
+Table_Stats :: struct {
+    total_rows:     u64,
+    page_count:     u64,
+    distinct_keys:  map[string]u64, // column_name -> distinct values count
+}
+
+*/
 Logical_Join_Type :: enum {
     INNER,
     LEFT_OUTER,
