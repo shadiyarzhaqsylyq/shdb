@@ -426,6 +426,30 @@ main :: proc() {
     R5: u64 = 1 << 4
     R6: u64 = 1 << 5
 
+/*
+
+Selectivity
+Users [Alice, Bob, Charlie] 3 rows
+Order [101,102] 2 rows
+
+Total possible combinations 3 * 2 = 6
+[Alice,101]
+[Alice,102]
+[Bob,101]
+[Bob,102]
+[Charlie,101]
+[Charlie,102]
+
+What happens during join?
+[Alice,101]. [Bob,102]
+there are 2 matches. Bob can not have 101. Selectivity is 2/6 = 0.333 (33.3%)
+3*2*0.333 = 2 rows
+
+
+*/
+
+
+
     // Edges with Logical Join Types and Selectivities:
     // 1. R1 ⋈ R2: INNER JOIN (Selectivity 0.05)
     add_hyperedge(&dp.g, R1, R2, 0.05, .INNER)
