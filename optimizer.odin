@@ -417,16 +417,7 @@ main :: proc() {
     dp.cardinalities[4] = 600.0;    dp.base_costs[4] = 600.0 * CPU_TUPLE_COST
     dp.cardinalities[5] = 100000.0; dp.base_costs[5] = 100000.0 * CPU_TUPLE_COST
 
-/*
-R1 categories table
-R2 users
-R3 orders;
-R4 suppliers
-R5 products
-R6 audit_logs
-
-
-*/
+//R1,R2,R3 and etc. are tables
 
     R1: u64 = 1 << 0
     R2: u64 = 1 << 1
