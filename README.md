@@ -37,9 +37,9 @@ INSERT INTO table VALUES (6, 'Lex', '3030C-3001b', 'HR', 11000, 'Miami');
 
 *SELECT*
 SELECT * FROM table;
-SELECT * FROM table WHERE city = '';
+SELECT * FROM table WHERE a = '';
 SELECT * FROM table WHERE a = '' AND b > '';
-SELECT * FROM table WHERE a = '' OR city = '';
+SELECT * FROM table WHERE a = '' OR b = '';
 SELECT * FROM table WHERE (a = '' AND b = '') OR c < '';
 SELECT * FROM table WHERE a = '' AND (b = '' OR d = '');
 
@@ -55,12 +55,12 @@ UPDATE table SET a = '' WHERE b <= '' AND (c = '' OR d = '');
 
 
 *DELETE*
-DELETE FROM table WHERE id > '';
-DELETE FROM table WHERE id < '';
+DELETE FROM table WHERE a > '';
+DELETE FROM table WHERE a < '';
 
 
-DELETE FROM table WHERE a = '' OR city = 'b';
-DELETE FROM table WHERE a = '' AND b = 'HR';
+DELETE FROM table WHERE a = '' OR b = '';
+DELETE FROM table WHERE a = '' AND b = '';
 DELETE FROM table WHERE (a = '' AND b = '') OR c <= '';
 DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 
