@@ -85,17 +85,12 @@ db=# \q - exit
 # Odin db.odin
 
 
-odin build .
+odin build db.odin -file
 
 
-./db sql.db
+./db db.sql
 
 
 ./db sql
 
 
-g++ -Wall -Wextra .cpp -o db
-
-./db sql.db
-
-./db sql
