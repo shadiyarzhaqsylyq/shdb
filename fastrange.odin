@@ -42,5 +42,19 @@ User ID: 3       -> Hash: 0x054d5b27376c7ceb -> Bucket: 1039
 User ID: 100000  -> Hash: 0xc4bc82cb05ff3a21 -> Bucket: 38459
 User ID: 999999  -> Hash: 0x762ef4f141443d3b -> Bucket: 23094
 
+[ Build Table (Inner) ]                     [ Probe Table (Outer) ]
+        |                                              |
+Key (e.g. user_id)                             Key (e.g. user_id)
+        |                                              |
+        v                                              v
+   Step 1: mm3()                                  Step 1: mm3()
+        |                                              |
+        v                                              v
+Step 2: bucket_index                           Step 2: bucket_index
+        |                                              |
+        v                                              v
+Insert into Hash Table[bucket]  <============== Lookup in Hash Table[bucket]
+                                                   (Find matches)
+
 
 */
