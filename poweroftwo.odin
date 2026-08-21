@@ -29,6 +29,12 @@ main :: proc() {
     }
 }
 /*
+output:
+User ID: 1       -> Bucket: 52012
+User ID: 2       -> Bucket: 33767
+User ID: 3       -> Bucket: 55502
+User ID: 100000  -> Bucket: 51204
+User ID: 999999  -> Bucket: 23466
 
 
 
