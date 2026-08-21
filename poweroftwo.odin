@@ -28,3 +28,12 @@ main :: proc() {
         fmt.printf("User ID: % -7d -> Bucket: %d\n", id, bucket)
     }
 }
+/*
+
+
+
+
+[ Row Data ]          [ Hash Function ]             [ Sizing / Mapping ]         [ Hash Table ]
+  user_id: 12345  -->   mm3(12345)     -->  hash: 0x8a3f... --> FastRange()  -->  Bucket #3421
+
+*/
