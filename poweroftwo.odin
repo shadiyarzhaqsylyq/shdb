@@ -25,7 +25,7 @@ main :: proc() {
         hash_value := mm3(id) // Step 1
         bucket := get_bucket_index_power_of_two(hash_value, CAPACITY) // Step 2 (Power-of-Two)
 
-        fmt.printf("User ID: % -7d -> Bucket: %d\n", id, bucket)
+        fmt.printf("User ID: % -7d -> Hash: 0x%016x -> Bucket: %d\n", id, hash_value, bucket)
     }
 }
 /*
