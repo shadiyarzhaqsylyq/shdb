@@ -45,13 +45,6 @@ User ID: 999999  -> Bucket: 23466
 
 
 
-User ID: 1       -> Hash: 0x4be14b0b14436577 -> Bucket: 14818
-User ID: 2       -> Hash: 0xa9b1fa9f12ab5641 -> Bucket: 33144
-User ID: 3       -> Hash: 0x054d5b27376c7ceb -> Bucket: 1039
-User ID: 100000  -> Hash: 0xc4bc82cb05ff3a21 -> Bucket: 38459
-User ID: 999999  -> Hash: 0x762ef4f141443d3b -> Bucket: 23094
-
-
 [ Build Table (Inner) ]                     [ Probe Table (Outer) ]
         |                                              |
 Key (e.g. user_id)                             Key (e.g. user_id)
