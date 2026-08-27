@@ -1,4 +1,5 @@
 package main
+// Table > 16
 /*
 
 memo: []BestPlan // Allocated for 2^N elements
