@@ -1,13 +1,6 @@
 package main
-// Table > 16
-/*
+// Robin Good Hashing for Table > 16
 
-memo: []BestPlan // Allocated for 2^N elements
-
-// Slices require integer indices:
-plan := memo[transmute(u64)set1]
-  
-*/
 import "core:fmt"
 
 Relation :: enum u8 { R1, R2, R3, R4, R5 }
