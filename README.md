@@ -74,7 +74,7 @@ DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 
 
 
-Not Implemented - Buffer Pool Manager, WAL/Recovery, Catalog, LRU-K replacer, Disk Scheduler, Disk Manager, query optimizer, executor.
+Not Implemented - Buffer Pool Manager, WAL/Recovery, Catalog, LRU-K replacer, Disk Scheduler, Disk Manager, query optimizer, executor, No free-page list, database wide transactions, Joins, foreign keys, USE statement
 
 
 gcc -Wall -Wextra db.c -o prog
