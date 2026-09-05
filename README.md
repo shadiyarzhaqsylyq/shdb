@@ -77,6 +77,9 @@ DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 Not Implemented - Buffer Pool Manager, WAL/Recovery, Catalog, LRU-K replacer, Disk Scheduler, Disk Manager, query optimizer, executor.
 
 
+gcc -Wall -Wextra db.c -o prog
+
+
 
 db=# \d - prints Tree
 
@@ -86,10 +89,6 @@ db=# \q - exit
 
 
 
-# Odin db.odin
-
-
-odin build db.odin -file
 
 
 ./db db.sql
