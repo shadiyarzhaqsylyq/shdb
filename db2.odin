@@ -135,6 +135,7 @@ Execute_Result :: enum {
 	Tx_Already_Active,
 	No_Active_Tx,
 	Table_Full,
+	Catalog_Full,
 }
 
 Meta_Command_Result :: enum {
@@ -148,6 +149,8 @@ Prepare_Result :: enum {
 	String_Too_Long,
 	Syntax_Error,
 	Unrecognized_Statement,
+	Table_Not_Found,
+	Table_Exists,
 }
 
 Statement_Type :: enum {
@@ -156,6 +159,7 @@ Statement_Type :: enum {
 	Update,
 	Delete,
 	Create,
+	Drop,
 	Begin,
 	Commit,
 	Rollback,
@@ -335,6 +339,10 @@ Statement :: struct {
 	row_to_insert:  Dynamic_Row,
 	table_name:     [MAX_NAME_LEN]u8,
 	created_schema: Schema,
+
+	// The table this statement targets, resolved by prepare_statement via
+	// the Database's catalog. nil for CREATE/BEGIN/COMMIT/ROLLBACK.
+	resolved_table: ^Table,
 
 	where_clause: ^Expr,
 	is_count:     bool,
@@ -565,16 +573,13 @@ pager_close :: proc(pager: ^Pager) {
 // Table & Cursor Structures & B+Tree Operations
 // ============================================================================
 
+MAX_TABLES    :: 16
+CATALOG_MAGIC :: 0x43415441 // "CATA"
+
 Table :: struct {
-	pager:         ^Pager,
+	pager:         ^Pager, // shared with all tables in the owning Database
 	root_page_num: u32,
 	schema:        Schema,
-
-	// Transaction state
-	in_transaction:         bool,
-	tx_original_num_pages:  u32,
-	tx_backup:              [TABLE_MAX_PAGES]rawptr,
-	tx_was_cached:          [TABLE_MAX_PAGES]bool,
 }
 
 Cursor :: struct {
@@ -598,64 +603,155 @@ initialize_internal_node :: proc(node: rawptr) {
 	internal_node_right_child(node)^ = INVALID_PAGE_NUM
 }
 
-tx_free_backups :: proc(table: ^Table) {
-	for i in 0 ..< TABLE_MAX_PAGES {
-		if table.tx_backup[i] != nil {
-			mem.free(table.tx_backup[i])
-			table.tx_backup[i] = nil
-		}
-	}
+// ============================================================================
+// Database: owns the shared Pager and a catalog of Tables.
+//
+// On-disk layout:
+//   page 0            -> Catalog_Header (magic, table count, and the page
+//                         number of each table's catalog entry)
+//   catalog entry page -> Table_Catalog_Entry (that table's root page + schema)
+//   all other pages    -> ordinary B+tree node pages, shared out of the same
+//                         page pool across every table in the file
+// ============================================================================
+
+Catalog_Header :: struct {
+	magic:              u32,
+	num_tables:         u32,
+	catalog_page_nums:  [MAX_TABLES]u32,
 }
 
-Meta_Page :: struct {
-	magic:         u32,
+Table_Catalog_Entry :: struct {
 	root_page_num: u32,
 	schema:        Schema,
 }
 
-table_open :: proc(filename: string) -> ^Table {
-	table := new(Table)
-	table.pager = pager_open(filename)
-	table.in_transaction = false
-	table.tx_original_num_pages = 0
+Database :: struct {
+	pager:      ^Pager,
+	tables:     [MAX_TABLES]Table,
+	num_tables: u32,
 
-	if table.pager.num_pages == 0 {
-		table.root_page_num = 1
-		table.schema = Schema{}
-		table.schema.has_schema = false
-
-		meta := cast(^Meta_Page)pager_get_page(table.pager, 0)
-		meta.magic = SCHEMA_MAGIC
-		meta.root_page_num = table.root_page_num
-		meta.schema = table.schema
-
-		root_node := pager_get_page(table.pager, table.root_page_num)
-		initialize_leaf_node(root_node)
-		set_node_root(root_node, true)
-	} else {
-		meta := cast(^Meta_Page)pager_get_page(table.pager, 0)
-		if meta.magic == SCHEMA_MAGIC {
-			table.root_page_num = meta.root_page_num
-			table.schema = meta.schema
-		} else {
-			table.root_page_num = 1
-			table.schema = Schema{}
-			table.schema.has_schema = false
-		}
-	}
-	return table
+	// Transaction state (spans the whole file, not just one table)
+	in_transaction:        bool,
+	tx_original_num_pages: u32,
+	tx_backup:             [TABLE_MAX_PAGES]rawptr,
+	tx_was_cached:         [TABLE_MAX_PAGES]bool,
 }
 
-table_close :: proc(table: ^Table) {
-	tx_free_backups(table)
-	for i in 0 ..< table.pager.num_pages {
-		if table.pager.pages[i] == nil do continue
-		pager_flush(table.pager, i)
-		mem.free(table.pager.pages[i])
-		table.pager.pages[i] = nil
+tx_free_backups :: proc(db: ^Database) {
+	for i in 0 ..< TABLE_MAX_PAGES {
+		if db.tx_backup[i] != nil {
+			mem.free(db.tx_backup[i])
+			db.tx_backup[i] = nil
+		}
 	}
-	pager_close(table.pager)
-	free(table)
+}
+
+db_find_table :: proc(db: ^Database, name: string) -> ^Table {
+	for i in 0 ..< db.num_tables {
+		if strings.equal_fold(buf_str(db.tables[i].schema.table_name[:]), name) {
+			return &db.tables[i]
+		}
+	}
+	return nil
+}
+
+// Re-derives db.tables/db.num_tables from whatever the catalog pages
+// currently say. Used at open time, and after a ROLLBACK (which may have
+// restored page 0 and any catalog-entry pages to their pre-transaction
+// contents).
+db_reload_catalog :: proc(db: ^Database) {
+	db.num_tables = 0
+	header := cast(^Catalog_Header)pager_get_page(db.pager, 0)
+	if header.magic != CATALOG_MAGIC do return
+
+	db.num_tables = header.num_tables
+	for i in 0 ..< db.num_tables {
+		entry := cast(^Table_Catalog_Entry)pager_get_page(db.pager, header.catalog_page_nums[i])
+		db.tables[i] = Table{pager = db.pager, root_page_num = entry.root_page_num, schema = entry.schema}
+	}
+}
+
+db_open :: proc(filename: string) -> ^Database {
+	db := new(Database)
+	db.pager = pager_open(filename)
+	db.in_transaction = false
+
+	if db.pager.num_pages == 0 {
+		header := cast(^Catalog_Header)pager_get_page(db.pager, 0)
+		header.magic = CATALOG_MAGIC
+		header.num_tables = 0
+	} else {
+		db_reload_catalog(db)
+	}
+	return db
+}
+
+db_close :: proc(db: ^Database) {
+	tx_free_backups(db)
+	for i in 0 ..< db.pager.num_pages {
+		if db.pager.pages[i] == nil do continue
+		pager_flush(db.pager, i)
+		mem.free(db.pager.pages[i])
+		db.pager.pages[i] = nil
+	}
+	pager_close(db.pager)
+	free(db)
+}
+
+// Creates a new table (and its root B+tree page + catalog entry) inside an
+// already-open Database. Returns false if the table already exists or the
+// catalog is full.
+db_create_table :: proc(db: ^Database, schema: ^Schema) -> bool {
+	name := buf_str(schema.table_name[:])
+	if db.num_tables >= MAX_TABLES do return false
+	if db_find_table(db, name) != nil do return false
+
+	root_page_num := db.pager.num_pages
+	root_node := pager_get_page(db.pager, root_page_num)
+	initialize_leaf_node(root_node)
+	set_node_root(root_node, true)
+
+	catalog_entry_page_num := db.pager.num_pages
+	entry := cast(^Table_Catalog_Entry)pager_get_page(db.pager, catalog_entry_page_num)
+	entry.root_page_num = root_page_num
+	entry.schema = schema^
+
+	header := cast(^Catalog_Header)pager_get_page(db.pager, 0)
+	header.magic = CATALOG_MAGIC
+	header.catalog_page_nums[db.num_tables] = catalog_entry_page_num
+	header.num_tables = db.num_tables + 1
+
+	db.tables[db.num_tables] = Table{pager = db.pager, root_page_num = root_page_num, schema = schema^}
+	db.num_tables += 1
+	return true
+}
+
+// Drops a table by removing its entry from the catalog. NOTE: this engine
+// has no free-page list, so the dropped table's catalog-entry page and all
+// of its former B+tree pages are simply orphaned inside the file rather
+// than reclaimed for reuse -- consistent with how the rest of the pager
+// never reuses pages either. The file will not shrink.
+db_drop_table :: proc(db: ^Database, name: string) -> bool {
+	header := cast(^Catalog_Header)pager_get_page(db.pager, 0)
+	if header.magic != CATALOG_MAGIC do return false
+
+	found_idx := -1
+	for i in 0 ..< header.num_tables {
+		entry := cast(^Table_Catalog_Entry)pager_get_page(db.pager, header.catalog_page_nums[i])
+		if strings.equal_fold(buf_str(entry.schema.table_name[:]), name) {
+			found_idx = int(i)
+			break
+		}
+	}
+	if found_idx < 0 do return false
+
+	for i := found_idx; i < int(header.num_tables) - 1; i += 1 {
+		header.catalog_page_nums[i] = header.catalog_page_nums[i + 1]
+	}
+	header.num_tables -= 1
+
+	db_reload_catalog(db)
+	return true
 }
 
 get_node_max_key :: proc(table: ^Table, node: rawptr) -> u32 {
@@ -1297,7 +1393,7 @@ parse_where_clause :: proc(list: ^Token_List, schema: ^Schema, statement: ^State
 	return parse_expr(list, schema, &statement.where_clause)
 }
 
-prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statement) -> Prepare_Result {
+prepare_statement :: proc(list: ^Token_List, db: ^Database, statement: ^Statement) -> Prepare_Result {
 	statement^ = Statement{}
 	if list.count == 0 || peek_token(list).kind == .End {
 		return .Syntax_Error
@@ -1313,6 +1409,8 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 		tbl := advance_token(list)
 		statement.type = .Create
 		buf_set(statement.table_name[:], token_text(tbl))
+
+		if db_find_table(db, token_text(tbl)) != nil do return .Table_Exists
 
 		if token_text(peek_token(list)) != "(" do return .Syntax_Error
 		advance_token(list) // consume '('
@@ -1363,6 +1461,18 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 		return .Success
 	}
 
+	// DROP TABLE <name>
+	if strings.equal_fold(first_text, "drop") {
+		advance_token(list)
+		if !match_token(list, "table") do return .Syntax_Error
+		tbl := advance_token(list)
+		statement.type = .Drop
+		buf_set(statement.table_name[:], token_text(tbl))
+
+		if db_find_table(db, token_text(tbl)) == nil do return .Table_Not_Found
+		return .Success
+	}
+
 	if strings.equal_fold(first_text, "begin") || strings.equal_fold(first_text, "start") {
 		advance_token(list)
 		if strings.equal_fold(first_text, "start") do match_token(list, "transaction")
@@ -1386,7 +1496,12 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 	if strings.equal_fold(first_text, "insert") {
 		advance_token(list)
 		match_token(list, "into")
-		advance_token(list) // consume table name
+		tbl := advance_token(list)
+		buf_set(statement.table_name[:], token_text(tbl))
+
+		t := db_find_table(db, token_text(tbl))
+		if t == nil do return .Table_Not_Found
+		schema := &t.schema
 
 		if token_text(peek_token(list)) == "(" {
 			for list.cursor < list.count && token_text(peek_token(list)) != ")" do advance_token(list)
@@ -1397,6 +1512,7 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 		if token_text(peek_token(list)) == "(" do advance_token(list)
 
 		statement.type = .Insert
+		statement.resolved_table = t
 		statement.row_to_insert.num_values = schema.num_columns
 
 		for i in 0 ..< schema.num_columns {
@@ -1437,11 +1553,15 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 			advance_token(list)
 		}
 
-		if match_token(list, "from") {
-			advance_token(list)
-		}
+		if !match_token(list, "from") do return .Syntax_Error
+		tbl := advance_token(list)
+		buf_set(statement.table_name[:], token_text(tbl))
 
-		return parse_where_clause(list, schema, statement)
+		t := db_find_table(db, token_text(tbl))
+		if t == nil do return .Table_Not_Found
+		statement.resolved_table = t
+
+		return parse_where_clause(list, &t.schema, statement)
 	}
 
 	// UPDATE <table> SET col1 = val1 [, col2 = val2] [WHERE <expr>]
@@ -1450,7 +1570,13 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 		statement.type = .Update
 		statement.is_set_update = true
 
-		advance_token(list) // table name
+		tbl := advance_token(list)
+		buf_set(statement.table_name[:], token_text(tbl))
+
+		t := db_find_table(db, token_text(tbl))
+		if t == nil do return .Table_Not_Found
+		statement.resolved_table = t
+
 		match_token(list, "set")
 
 		for list.cursor < list.count &&
@@ -1473,7 +1599,7 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 			}
 		}
 
-		return parse_where_clause(list, schema, statement)
+		return parse_where_clause(list, &t.schema, statement)
 	}
 
 	// DELETE FROM <table> [WHERE <expr>]
@@ -1481,11 +1607,15 @@ prepare_statement :: proc(list: ^Token_List, schema: ^Schema, statement: ^Statem
 		advance_token(list)
 		statement.type = .Delete
 
-		if match_token(list, "from") {
-			advance_token(list)
-		}
+		if !match_token(list, "from") do return .Syntax_Error
+		tbl := advance_token(list)
+		buf_set(statement.table_name[:], token_text(tbl))
 
-		return parse_where_clause(list, schema, statement)
+		t := db_find_table(db, token_text(tbl))
+		if t == nil do return .Table_Not_Found
+		statement.resolved_table = t
+
+		return parse_where_clause(list, &t.schema, statement)
 	}
 
 	return .Unrecognized_Statement
@@ -1664,97 +1794,104 @@ execute_select :: proc(statement: ^Statement, table: ^Table) -> Execute_Result {
 	return .Success
 }
 
-execute_begin :: proc(table: ^Table) -> Execute_Result {
-	if table.in_transaction do return .Tx_Already_Active
+execute_begin :: proc(db: ^Database) -> Execute_Result {
+	if db.in_transaction do return .Tx_Already_Active
 
-	table.in_transaction = true
-	table.tx_original_num_pages = table.pager.num_pages
+	db.in_transaction = true
+	db.tx_original_num_pages = db.pager.num_pages
 
 	for i in 0 ..< TABLE_MAX_PAGES {
-		page_ptr := table.pager.pages[i]
+		page_ptr := db.pager.pages[i]
 		if page_ptr != nil {
-			table.tx_backup[i], _ = mem.alloc(PAGE_SIZE)
-			mem.copy(table.tx_backup[i], page_ptr, PAGE_SIZE)
-			table.tx_was_cached[i] = true
+			db.tx_backup[i], _ = mem.alloc(PAGE_SIZE)
+			mem.copy(db.tx_backup[i], page_ptr, PAGE_SIZE)
+			db.tx_was_cached[i] = true
 		} else {
-			table.tx_backup[i] = nil
-			table.tx_was_cached[i] = false
+			db.tx_backup[i] = nil
+			db.tx_was_cached[i] = false
 		}
 	}
 	return .Success
 }
 
-execute_commit :: proc(table: ^Table) -> Execute_Result {
-	if !table.in_transaction do return .No_Active_Tx
+execute_commit :: proc(db: ^Database) -> Execute_Result {
+	if !db.in_transaction do return .No_Active_Tx
 
-	tx_free_backups(table)
-	for i in 0 ..< table.pager.num_pages {
-		if table.pager.pages[i] != nil {
-			pager_flush(table.pager, i)
+	tx_free_backups(db)
+	for i in 0 ..< db.pager.num_pages {
+		if db.pager.pages[i] != nil {
+			pager_flush(db.pager, i)
 		}
 	}
-	table.in_transaction = false
+	db.in_transaction = false
 	return .Success
 }
 
-execute_rollback :: proc(table: ^Table) -> Execute_Result {
-	if !table.in_transaction do return .No_Active_Tx
+execute_rollback :: proc(db: ^Database) -> Execute_Result {
+	if !db.in_transaction do return .No_Active_Tx
 
 	for i in 0 ..< TABLE_MAX_PAGES {
-		if u32(i) < table.tx_original_num_pages {
-			if table.tx_was_cached[i] {
-				mem.copy(table.pager.pages[i], table.tx_backup[i], PAGE_SIZE)
-				mem.free(table.tx_backup[i])
-				table.tx_backup[i] = nil
-			} else if table.pager.pages[i] != nil {
-				mem.free(table.pager.pages[i])
-				table.pager.pages[i] = nil
+		if u32(i) < db.tx_original_num_pages {
+			if db.tx_was_cached[i] {
+				mem.copy(db.pager.pages[i], db.tx_backup[i], PAGE_SIZE)
+				mem.free(db.tx_backup[i])
+				db.tx_backup[i] = nil
+			} else if db.pager.pages[i] != nil {
+				mem.free(db.pager.pages[i])
+				db.pager.pages[i] = nil
 			}
 		} else {
-			if table.pager.pages[i] != nil {
-				mem.free(table.pager.pages[i])
-				table.pager.pages[i] = nil
+			if db.pager.pages[i] != nil {
+				mem.free(db.pager.pages[i])
+				db.pager.pages[i] = nil
 			}
-			if table.tx_backup[i] != nil {
-				mem.free(table.tx_backup[i])
-				table.tx_backup[i] = nil
+			if db.tx_backup[i] != nil {
+				mem.free(db.tx_backup[i])
+				db.tx_backup[i] = nil
 			}
 		}
 	}
-	table.pager.num_pages = table.tx_original_num_pages
-	table.in_transaction = false
+	db.pager.num_pages = db.tx_original_num_pages
+	db.in_transaction = false
+
+	// Any CREATE TABLE done inside the rolled-back transaction must also be
+	// forgotten from the in-memory catalog view.
+	db_reload_catalog(db)
 	return .Success
 }
 
-execute_statement :: proc(statement: ^Statement, table: ^Table) -> Execute_Result {
+execute_statement :: proc(statement: ^Statement, db: ^Database) -> Execute_Result {
 	switch statement.type {
 	case .Insert:
-		return execute_insert(statement, table)
+		return execute_insert(statement, statement.resolved_table)
 	case .Select:
-		return execute_select(statement, table)
+		return execute_select(statement, statement.resolved_table)
 	case .Update:
-		return execute_update(statement, table)
+		return execute_update(statement, statement.resolved_table)
 	case .Delete:
-		return execute_delete(statement, table)
+		return execute_delete(statement, statement.resolved_table)
 	case .Create:
-		table.schema = statement.created_schema
-
-		meta := cast(^Meta_Page)pager_get_page(table.pager, 0)
-		meta.magic = SCHEMA_MAGIC
-		meta.root_page_num = table.root_page_num
-		meta.schema = table.schema
-
-		root_node := pager_get_page(table.pager, table.root_page_num)
-		initialize_leaf_node(root_node)
-		set_node_root(root_node, true)
-		fmt.printf("CREATE TABLE (%d columns configured)\n", table.schema.num_columns)
+		if !db_create_table(db, &statement.created_schema) {
+			return .Catalog_Full
+		}
+		fmt.printf(
+			"CREATE TABLE %s (%d columns configured)\n",
+			buf_str(statement.created_schema.table_name[:]),
+			statement.created_schema.num_columns,
+		)
+		return .Success
+	case .Drop:
+		if !db_drop_table(db, buf_str(statement.table_name[:])) {
+			return .Not_Found
+		}
+		fmt.printf("DROP TABLE %s\n", buf_str(statement.table_name[:]))
 		return .Success
 	case .Begin:
-		return execute_begin(table)
+		return execute_begin(db)
 	case .Commit:
-		return execute_commit(table)
+		return execute_commit(db)
 	case .Rollback:
-		return execute_rollback(table)
+		return execute_rollback(db)
 	}
 	return .Success
 }
@@ -1767,6 +1904,7 @@ print_help :: proc() {
 	fmt.print(
 		"SQL Commands:\n" +
 		"  CREATE TABLE <name> (<pk_col> INT PRIMARY KEY, <col2> VARCHAR(32), <col3> INT, ...);\n" +
+		"  DROP TABLE <name>;\n" +
 		"  INSERT INTO <name> VALUES (<val1>, '<val2>', ...);\n" +
 		"  SELECT * FROM <name> [WHERE <expr>];\n" +
 		"  SELECT COUNT(*) FROM <name> [WHERE <expr>];\n" +
@@ -1774,11 +1912,13 @@ print_help :: proc() {
 		"  DELETE FROM <name> WHERE <expr>;\n" +
 		"  (WHERE supports =, !=, <>, <, >, <=, >=, AND, OR, and parentheses ())\n" +
 		"  BEGIN; | COMMIT; | ROLLBACK;\n" +
+		"  A single database file may hold multiple tables.\n" +
 		"Meta commands:\n" +
-		"  \\q or .exit      quit the shell\n" +
-		"  \\d or .btree     print the B+tree structure\n" +
-		"  \\c or .constants print page size constants\n" +
-		"  \\? or .help      show this message\n",
+		"  \\q or .exit                quit the shell\n" +
+		"  \\dt or .tables              list tables in this file\n" +
+		"  \\d [name] or .btree [name]  print a table's B+tree structure\n" +
+		"  \\c [name] or .constants     print page size constants for a table\n" +
+		"  \\? or .help                 show this message\n",
 	)
 }
 
@@ -1797,19 +1937,60 @@ print_constants :: proc(table: ^Table) {
 	)
 }
 
-do_meta_command :: proc(input: string, table: ^Table) -> Meta_Command_Result {
-	if input == ".exit" || input == "\\q" {
-		table_close(table)
+// Resolves an optional table-name argument for meta commands like ".btree"
+// and ".constants". If no name was given, this only succeeds when the
+// database has exactly one table (so the command stays unambiguous).
+meta_resolve_table :: proc(db: ^Database, arg: string) -> (^Table, bool) {
+	if arg != "" {
+		t := db_find_table(db, arg)
+		if t == nil {
+			fmt.printf("No such table '%s'.\n", arg)
+			return nil, false
+		}
+		return t, true
+	}
+	if db.num_tables == 1 {
+		return &db.tables[0], true
+	}
+	if db.num_tables == 0 {
+		fmt.println("This database has no tables yet.")
+	} else {
+		fmt.println("This database has multiple tables; specify one, e.g. '.btree users'.")
+	}
+	return nil, false
+}
+
+do_meta_command :: proc(input: string, db: ^Database) -> Meta_Command_Result {
+	parts := strings.split(input, " ")
+	defer delete(parts)
+	cmd := parts[0]
+	arg := ""
+	if len(parts) > 1 do arg = strings.trim_space(parts[1])
+
+	if cmd == ".exit" || cmd == "\\q" {
+		db_close(db)
 		os.exit(0)
-	} else if input == ".btree" || input == "\\d" {
-		fmt.println("Tree:")
-		print_tree(table, table.root_page_num, 0)
+	} else if cmd == ".tables" || cmd == "\\dt" {
+		if db.num_tables == 0 {
+			fmt.println("This database has no tables yet.")
+		}
+		for i in 0 ..< db.num_tables {
+			fmt.printf("  %s (%d columns)\n", buf_str(db.tables[i].schema.table_name[:]), db.tables[i].schema.num_columns)
+		}
 		return .Success
-	} else if input == ".constants" || input == "\\c" {
-		fmt.println("Constants:")
-		print_constants(table)
+	} else if cmd == ".btree" || cmd == "\\d" {
+		t, ok := meta_resolve_table(db, arg)
+		if !ok do return .Success
+		fmt.printf("Tree (%s):\n", buf_str(t.schema.table_name[:]))
+		print_tree(t, t.root_page_num, 0)
 		return .Success
-	} else if input == ".help" || input == "\\?" {
+	} else if cmd == ".constants" || cmd == "\\c" {
+		t, ok := meta_resolve_table(db, arg)
+		if !ok do return .Success
+		fmt.printf("Constants (%s):\n", buf_str(t.schema.table_name[:]))
+		print_constants(t)
+		return .Success
+	} else if cmd == ".help" || cmd == "\\?" {
 		print_help()
 		return .Success
 	}
@@ -1823,7 +2004,7 @@ main :: proc() {
 	}
 
 	filename := os.args[1]
-	table := table_open(filename)
+	db := db_open(filename)
 
 	stdin_stream := os.to_stream(os.stdin)
 	reader: bufio.Reader
@@ -1844,7 +2025,7 @@ main :: proc() {
 		if len(input_buffer) == 0 do continue
 
 		if input_buffer[0] == '.' || input_buffer[0] == '\\' {
-			switch do_meta_command(input_buffer, table) {
+			switch do_meta_command(input_buffer, db) {
 			case .Success:
 				continue
 			case .Unrecognized_Command:
@@ -1857,7 +2038,7 @@ main :: proc() {
 		tokenize_input(input_buffer, &tokens)
 
 		statement: Statement
-		prep_res := prepare_statement(&tokens, &table.schema, &statement)
+		prep_res := prepare_statement(&tokens, db, &statement)
 
 		switch prep_res {
 		case .Success:
@@ -1878,16 +2059,17 @@ main :: proc() {
 			fmt.printf("Unrecognized keyword at start of '%s'.\n", input_buffer)
 			free_expr(statement.where_clause)
 			continue
-		}
-
-		if !table.schema.has_schema &&
-		   (statement.type == .Insert || statement.type == .Select || statement.type == .Update || statement.type == .Delete) {
-			fmt.println("Error: No table schema found. Please run CREATE TABLE first.")
+		case .Table_Not_Found:
+			fmt.printf("Error: table '%s' does not exist.\n", buf_str(statement.table_name[:]))
+			free_expr(statement.where_clause)
+			continue
+		case .Table_Exists:
+			fmt.printf("Error: table '%s' already exists.\n", buf_str(statement.table_name[:]))
 			free_expr(statement.where_clause)
 			continue
 		}
 
-		exec_res := execute_statement(&statement, table)
+		exec_res := execute_statement(&statement, db)
 		free_expr(statement.where_clause)
 
 		switch exec_res {
@@ -1911,8 +2093,10 @@ main :: proc() {
 			fmt.println("Error: no active transaction.")
 		case .Table_Full:
 			fmt.printf("Error: table is full (max %d pages).\n", TABLE_MAX_PAGES)
+		case .Catalog_Full:
+			fmt.printf("Error: this database already has the maximum of %d tables.\n", MAX_TABLES)
 		}
 	}
 
-	table_close(table)
+	db_close(db)
 }
