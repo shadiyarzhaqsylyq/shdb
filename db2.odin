@@ -607,17 +607,24 @@ initialize_internal_node :: proc(node: rawptr) {
 // Database: owns the shared Pager and a catalog of Tables.
 //
 // On-disk layout:
-//   page 0            -> Catalog_Header (magic, table count, and the page
-//                         number of each table's catalog entry)
+//   page 0            -> Catalog_Header (magic, table count, the page number
+//                         of each table's catalog entry, and a free-page list)
 //   catalog entry page -> Table_Catalog_Entry (that table's root page + schema)
 //   all other pages    -> ordinary B+tree node pages, shared out of the same
 //                         page pool across every table in the file
 // ============================================================================
 
+MAX_FREE_PAGES :: TABLE_MAX_PAGES
+
 Catalog_Header :: struct {
 	magic:              u32,
 	num_tables:         u32,
 	catalog_page_nums:  [MAX_TABLES]u32,
+
+	// Pages reclaimed from dropped tables, available for reuse before the
+	// pager grows the file with a brand new page.
+	free_count: u32,
+	free_pages: [MAX_FREE_PAGES]u32,
 }
 
 Table_Catalog_Entry :: struct {
@@ -680,6 +687,7 @@ db_open :: proc(filename: string) -> ^Database {
 		header := cast(^Catalog_Header)pager_get_page(db.pager, 0)
 		header.magic = CATALOG_MAGIC
 		header.num_tables = 0
+		header.free_count = 0
 	} else {
 		db_reload_catalog(db)
 	}
@@ -698,6 +706,49 @@ db_close :: proc(db: ^Database) {
 	free(db)
 }
 
+// Returns a page number ready to hold new data: a reclaimed page from the
+// free list if one is available, otherwise a brand new page at the end of
+// the file. Either way the caller is responsible for fully overwriting the
+// page's contents (initialize_leaf_node, a fresh catalog entry, etc.) since
+// a reused page still holds whatever was on it before.
+alloc_page :: proc(pager: ^Pager) -> u32 {
+	header := cast(^Catalog_Header)pager_get_page(pager, 0)
+	if header.magic == CATALOG_MAGIC && header.free_count > 0 {
+		header.free_count -= 1
+		return header.free_pages[header.free_count]
+	}
+	return pager.num_pages
+}
+
+// Returns a page to the free list so a later alloc_page can reuse it. If
+// the free list is somehow already full (can't happen in practice: it's
+// sized to hold every page in the file), the page is silently leaked
+// rather than corrupting the list.
+free_page :: proc(pager: ^Pager, page_num: u32) {
+	header := cast(^Catalog_Header)pager_get_page(pager, 0)
+	if int(header.free_count) < len(header.free_pages) {
+		header.free_pages[header.free_count] = page_num
+		header.free_count += 1
+	}
+}
+
+// Walks a table's whole B+tree, collecting every page number it occupies
+// (internal nodes and leaves alike) so they can be handed to free_page.
+collect_table_pages :: proc(pager: ^Pager, page_num: u32, out: ^[dynamic]u32) {
+	append(out, page_num)
+	node := pager_get_page(pager, page_num)
+	if get_node_type(node) == .Internal {
+		num_keys := internal_node_num_keys(node)^
+		for i in 0 ..< num_keys {
+			collect_table_pages(pager, internal_node_child(node, i)^, out)
+		}
+		right := internal_node_right_child(node)^
+		if right != INVALID_PAGE_NUM {
+			collect_table_pages(pager, right, out)
+		}
+	}
+}
+
 // Creates a new table (and its root B+tree page + catalog entry) inside an
 // already-open Database. Returns false if the table already exists or the
 // catalog is full.
@@ -706,12 +757,12 @@ db_create_table :: proc(db: ^Database, schema: ^Schema) -> bool {
 	if db.num_tables >= MAX_TABLES do return false
 	if db_find_table(db, name) != nil do return false
 
-	root_page_num := db.pager.num_pages
+	root_page_num := alloc_page(db.pager)
 	root_node := pager_get_page(db.pager, root_page_num)
 	initialize_leaf_node(root_node)
 	set_node_root(root_node, true)
 
-	catalog_entry_page_num := db.pager.num_pages
+	catalog_entry_page_num := alloc_page(db.pager)
 	entry := cast(^Table_Catalog_Entry)pager_get_page(db.pager, catalog_entry_page_num)
 	entry.root_page_num = root_page_num
 	entry.schema = schema^
@@ -726,20 +777,24 @@ db_create_table :: proc(db: ^Database, schema: ^Schema) -> bool {
 	return true
 }
 
-// Drops a table by removing its entry from the catalog. NOTE: this engine
-// has no free-page list, so the dropped table's catalog-entry page and all
-// of its former B+tree pages are simply orphaned inside the file rather
-// than reclaimed for reuse -- consistent with how the rest of the pager
-// never reuses pages either. The file will not shrink.
+// Drops a table by removing its entry from the catalog and reclaiming every
+// page it used (its whole B+tree plus its catalog-entry page) onto the
+// free list, so later CREATE TABLE / INSERT calls can reuse that space
+// instead of growing the file.
 db_drop_table :: proc(db: ^Database, name: string) -> bool {
 	header := cast(^Catalog_Header)pager_get_page(db.pager, 0)
 	if header.magic != CATALOG_MAGIC do return false
 
 	found_idx := -1
+	dropped_root: u32
+	dropped_catalog_page: u32
 	for i in 0 ..< header.num_tables {
-		entry := cast(^Table_Catalog_Entry)pager_get_page(db.pager, header.catalog_page_nums[i])
+		entry_page_num := header.catalog_page_nums[i]
+		entry := cast(^Table_Catalog_Entry)pager_get_page(db.pager, entry_page_num)
 		if strings.equal_fold(buf_str(entry.schema.table_name[:]), name) {
 			found_idx = int(i)
+			dropped_root = entry.root_page_num
+			dropped_catalog_page = entry_page_num
 			break
 		}
 	}
@@ -749,6 +804,14 @@ db_drop_table :: proc(db: ^Database, name: string) -> bool {
 		header.catalog_page_nums[i] = header.catalog_page_nums[i + 1]
 	}
 	header.num_tables -= 1
+
+	pages := make([dynamic]u32, 0, 32)
+	defer delete(pages)
+	collect_table_pages(db.pager, dropped_root, &pages)
+	for p in pages {
+		free_page(db.pager, p)
+	}
+	free_page(db.pager, dropped_catalog_page)
 
 	db_reload_catalog(db)
 	return true
@@ -871,7 +934,7 @@ leaf_node_delete :: proc(cursor: ^Cursor) {
 }
 
 get_unused_page_num :: proc(table: ^Table) -> u32 {
-	return table.pager.num_pages
+	return alloc_page(table.pager)
 }
 
 create_new_root :: proc(table: ^Table, right_child_page_num: u32) {
