@@ -67,6 +67,8 @@ DELETE FROM table WHERE a = '' AND b = '';
 DELETE FROM table WHERE (a = '' AND b = '') OR c <= '';
 DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 
+*DROP*
+DROP TABLE tb1
 
 ```
 
