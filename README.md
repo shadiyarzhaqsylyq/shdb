@@ -68,7 +68,21 @@ DELETE FROM table WHERE (a = '' AND b = '') OR c <= '';
 DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 
 *DROP*
-DROP TABLE tb1
+DROP TABLE table;
+SELECT COUNT(*) FROM table;
+SELECT COUNT(*) FROM table WHERE a >= 21;
+ALTER TABLE table ADD COLUMN col1 VARCHAR(64);
+ALTER TABLE table DROP COLUMN col1;
+
+Rename table
+ALTER TABLE table RENAME TO users;
+Rename column
+ALTER TABLE users RENAME COLUMN name TO full_name;
+
+
+
+
+
 
 ```
 
@@ -82,16 +96,10 @@ Not Implemented - Buffer Pool Manager, WAL/Recovery, Catalog, LRU-K replacer, Di
 gcc -Wall -Wextra db.c -o prog
 
 
-odin build db.odin -file
-
-
-
-db=# \d - prints Tree
+db=# \? - for help
 
 
 db=# \q - exit
-
-
 
 
 
