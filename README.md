@@ -70,12 +70,6 @@ DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 
 
 
-FOR 2nd DB
-LIMIT N OFFSET M skips the first M rows, then returns exactly the next N rows
-
-Not supported
-LIMIT N returns only first N rows
-OFFSET N skips first N rows and returns remaining rows
 
 
 
