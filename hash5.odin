@@ -4,6 +4,8 @@ import "core:fmt"
 import "core:mem"
 import "core:hash/xxhash"
 //Packed Struct + Seed Chaining
+//Use Packed Struct + Seed Chaining when composite key has both fixed-width columns and variable-length data(like VARCHAR/string)
+//because they can be different in sizes('finance','IT' and etc.)
 // 1. PACKED STRUCT: Holds all fixed-width key columns.
 // The `#packed` directive ensures 0 alignment padding bytes.
 Fixed_Key_Part :: struct #packed {
