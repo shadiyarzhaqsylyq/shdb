@@ -103,10 +103,8 @@ gcc -Wall -Wextra db.c -o prog
 
 
 
-\? - for help
 
-
-\q - exit
+\q - exit,\? - for help
 
 
 
