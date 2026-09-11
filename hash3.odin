@@ -25,3 +25,14 @@ main :: proc() {
     h := hash_composite_key(&key)
     fmt.printfln("One-shot Composite XXH64: 0x%016x", h)
 }
+//Seed chaining. when columns can not be contiguous. If columns are stored separately or are dynamic(string + u64), we can chain
+//one shot calls by passing the previous conlumn's hash as the seed of the next
+seed: u64 = 0xdeadbeef_cafebabe
+
+// Step 1: Hash first column
+tenant_bytes := transmute([4]u8)tenant_id
+h1 := xxhash.XXH64(tenant_bytes[:], seed)
+
+// Step 2: Use h1 as the seed for the second column
+user_bytes := transmute([8]u8)user_id
+composite_hash := xxhash.XXH64(user_bytes[:], h1)
