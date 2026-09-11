@@ -69,8 +69,6 @@ DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 
 *DROP*
 DROP TABLE table;
-SELECT COUNT(*) FROM table;
-SELECT COUNT(*) FROM table WHERE a >= 21;
 ALTER TABLE table ADD COLUMN col1 VARCHAR(64);
 ALTER TABLE table DROP COLUMN col1;
 
