@@ -1,5 +1,19 @@
 package main
+/*
+mm3finalizer is used when BIGINT/u64
+WHERE a.id = b.id
 
+Composite fixed columns(Packed Struct + One-Shot XXH64)
+WHERE a.tenant = b.tenant AND a.user_id = b.user_id
+
+Mixed columns with strings(Packed Struct + Seed Chaining)
+WHERE a.tenant = b.tenant AND a.name = b.name
+
+Use get_bucket_index_power_of_two() or fastrange() in the end for output values of 
+mm3finalizer,Packed Struct + One-Shot,Packed Struct + Seed Chaining
+
+
+*/
 import "core:fmt"
 import "core:mem"
 import "core:hash/xxhash"
