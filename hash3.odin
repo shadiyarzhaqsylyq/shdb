@@ -4,6 +4,7 @@ import "core:fmt"
 import "core:mem"
 import "core:hash/xxhash"
 //Packed Struct + One Shot
+//Use Packed Struct + One Shot when all key columsn are fixed-width(integers, UUIDs, Dates)
 // 1. Pack the composite key struct so there is no padding between fields
 Composite_Key :: struct #packed {
     tenant_id: u32,
