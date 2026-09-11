@@ -3,7 +3,7 @@ package main
 import "core:fmt"
 import "core:mem"
 import "core:hash/xxhash"
-
+//Packed Struct + One Shot
 // 1. Pack the composite key struct so there is no padding between fields
 Composite_Key :: struct #packed {
     tenant_id: u32,
