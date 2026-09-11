@@ -74,6 +74,12 @@ DROP TABLE table;
 *ALTER TABLE*
 ALTER TABLE <table name> ADD COLUMN <column name> <type> [DEFAULT <value>];
 ALTER TABLE <table name> DROP COLUMN <columns name>;
+ALTER TABLE users ADD COLUMN email VARCHAR(32) DEFAULT 'n/a';
+SELECT * FROM users;
+-- (1, 'Alice', 'n/a')
+
+ALTER TABLE users ADD COLUMN age INT;     -- no DEFAULT given -> starts at 0
+ALTER TABLE users DROP COLUMN email;
 
 *Not Supported*
 ALTER TABLE table RENAME TO users;
