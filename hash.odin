@@ -12,7 +12,14 @@ WHERE a.tenant = b.tenant AND a.name = b.name
 Use get_bucket_index_power_of_two() or fastrange() in the end for output values of 
 mm3finalizer,Packed Struct + One-Shot,Packed Struct + Seed Chaining
 
+SELECT table1.name, table2.status
+FROM table1
+JOIN table2 ON table1.id = table2.id
 
+[bucket0] = [Empty/NULL]
+[bucket1] = [key 42][payload: "Alice", "Active"]
+...
+[bucketN] = [key 105][payload: "Bob", "Pending"]
 */
 import "core:fmt"
 import "core:mem"
@@ -38,9 +45,9 @@ hash_single_int :: proc(id: u64) -> u64 {
 // CASE 2: Composite Fixed Columns (using Packed Struct + One-Shot)
 // -------------------------------------------------------------
 Fixed_Key :: struct #packed {
-    tenant_id: u32,
-    user_id:   u64,
-}
+    tenant_id: u32, //4 bytes
+    user_id:   u64, //8 bytes
+} // Total: exactly 12 contiguous bytes
 
 hash_composite_fixed :: proc(key: ^Fixed_Key, seed: u64) -> u64 {
     bytes := mem.byte_slice(key, size_of(Fixed_Key))
@@ -76,4 +83,25 @@ main :: proc() {
     fmt.printfln("Single Int Bucket:      %d", bucket1)
     fmt.printfln("Composite Fixed Bucket: %d", bucket2)
     fmt.printfln("Mixed String Bucket:    %d", bucket3)
+
+
+
+	key1 := Fixed_Key{tenant_id = 42, user_id = 100921}
+    dept1 := "engineering"
+
+    // Row 2 from Table B (exact match)
+    key2 := Fixed_Key{tenant_id = 42, user_id = 100921}
+    dept2 := "engineering"
+
+    // Row 3 from Table C (different department)
+    key3 := Fixed_Key{tenant_id = 42, user_id = 100921}
+    dept3 := "marketing"
+
+    h4 := hash_mixed_with_string(&key1, dept1, query_seed)
+    h5 := hash_mixed_with_string(&key2, dept2, query_seed)
+    h6 := hash_mixed_with_string(&key3, dept3, query_seed)
+
+    fmt.printfln("Row 1 Hash: 0x%016x", h4)
+    fmt.printfln("Row 2 Hash: 0x%016x (Matches Row 1: %v)", h5, h4 == h5)
+    fmt.printfln("Row 3 Hash: 0x%016x (Matches Row 1: %v)", h6, h4 == h6)
 }
