@@ -86,7 +86,7 @@ SELECT * FROM users WHERE age > 20 ORDER BY age DESC LIMIT 3;
 
 
 ```
-LIMIT N OFFSET M skips the first M rows, then returns exactly the next N rows
+LIMIT N OFFSET M skips the first M rows, then returns exactly the next N rows.
 LIMIT N returns only first N rows
 
 
