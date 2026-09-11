@@ -1,17 +1,3 @@
-# Using db.odin — examples
-
-## Building and starting it
-
-```bash
-odin build . -out:dbshell
-./dbshell mydata.db
-```
-
-`mydata.db` is created if it doesn't exist yet, and reopened (schema, tables,
-and data intact) if it does. Every command below is typed at the `db=#`
-prompt and ends with a semicolon.
-
----
 
 ## 1. Creating a table
 
@@ -100,9 +86,9 @@ DROP TABLE orders;
 ```
 
 Removes the table and its data. The name is immediately free to reuse in a
-new `CREATE TABLE`, and the space it used gets recycled by later inserts
+new CREATE TABLE, and the space it used gets recycled by later inserts
 elsewhere in the file rather than left as dead weight. Like everything
-else, this rolls back cleanly if done inside a `BEGIN` ... `ROLLBACK`.
+else, this rolls back cleanly if done inside a BEGIN ... ROLLBACK.
 
 ---
 
@@ -131,18 +117,17 @@ tables, run separate `SELECT`s and match them up yourself (or ask me to add
 ## 6. Changing a table's columns
 
 ```sql
-ALTER TABLE users ADD COLUMN email VARCHAR(32) DEFAULT 'n/a';
+ALTER TABLE users ADD COLUMN email VARCHAR(32) DEFAULT 'n/a'; 
+ALTER TABLE users ADD COLUMN email VARCHAR(32) -- no DEFAULT given -> starts at ''
 SELECT * FROM users;
 -- (1, 'Alice', 'n/a')
 
-ALTER TABLE users ADD COLUMN age INT;     -- no DEFAULT given -> starts at 0
+ALTER TABLE users ADD COLUMN age INT; -- no DEFAULT given -> starts at 0
 ALTER TABLE users DROP COLUMN email;
 ```
 
 Notes:
-- `COLUMN` is optional: `ALTER TABLE users ADD age INT;` works too.
-- If you skip `DEFAULT`, new columns start as `0` (INT) or `''` (VARCHAR)
-  for every existing row.
+COLUMN is optional: ALTER TABLE users ADD age INT; works too.
 - You can't drop the primary key column, and you can't drop a table's last
   remaining column.
 - This rewrites every row under the hood (column layout changes), so it
@@ -151,36 +136,6 @@ Notes:
 
 ---
 
-## 7. Meta commands
-
-These start with `.` or `\` and aren't SQL, so no semicolon:
-
-| Command | Alias | Does |
-|---|---|---|
-| `.tables` | `\dt` | List every table in this file |
-| `.btree [name]` | `\d [name]` | Print a table's B+tree structure |
-| `.constants [name]` | `\c [name]` | Print page/row size internals |
-| `.help` | `\?` | Show the command summary |
-| `.exit` | `\q` | Quit |
-
-The `[name]` is optional only when the file has exactly one table:
-
-```
-db=# .tables
-  users (3 columns)
-  orders (3 columns)
-db=# .btree users
-Tree (users):
-- leaf (size 2)
-  - 1
-  - 2
-db=# .constants orders
-Constants (orders):
-ROW_SIZE: 12
-...
-```
-
----
 
 ## Quick reference
 
