@@ -72,8 +72,8 @@ DROP TABLE table;
 
 
 *ALTER TABLE*
-ALTER TABLE table ADD COLUMN col1 VARCHAR(64);
-ALTER TABLE table DROP COLUMN col1;
+ALTER TABLE <table name> ADD COLUMN <column name> <type> [DEFAULT <value>];
+ALTER TABLE <table name> DROP COLUMN <columns name>;
 
 *Not Supported*
 ALTER TABLE table RENAME TO users;
