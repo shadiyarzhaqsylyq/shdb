@@ -89,7 +89,12 @@ ALTER TABLE users RENAME COLUMN name TO full_name;
 
 
 
+gcc -Wall -Wextra db.c -o prog
 
+\q - exit,\? - for help
+
+./db db.sql
+./db sql
 ```
 
 
@@ -97,21 +102,5 @@ ALTER TABLE users RENAME COLUMN name TO full_name;
 
 
 Not Implemented - Buffer Pool Manager, WAL/Recovery, Catalog, LRU-K replacer, Disk Scheduler, Disk Manager, query optimizer, executor, No free-page list, database wide transactions, Joins, foreign keys, USE statement
-
-
-gcc -Wall -Wextra db.c -o prog
-
-
-
-
-\q - exit,\? - for help
-
-
-
-
-./db db.sql
-
-
-./db sql
 
 
