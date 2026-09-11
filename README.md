@@ -67,14 +67,16 @@ DELETE FROM table WHERE a = '' AND b = '';
 DELETE FROM table WHERE (a = '' AND b = '') OR c <= '';
 DELETE FROM table WHERE a > '' AND (b = '' OR c = '');
 
-*DROP*
+*DROP TABLE*
 DROP TABLE table;
+
+
+*ALTER TABLE*
 ALTER TABLE table ADD COLUMN col1 VARCHAR(64);
 ALTER TABLE table DROP COLUMN col1;
 
-Rename table
+*Not Supported*
 ALTER TABLE table RENAME TO users;
-Rename column
 ALTER TABLE users RENAME COLUMN name TO full_name;
 
 
