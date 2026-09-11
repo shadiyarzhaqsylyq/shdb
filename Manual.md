@@ -1,4 +1,4 @@
-
+This is for 2nd DB written in Odin language
 ## 1. Creating a table
 
 ```sql
@@ -152,4 +152,9 @@ UPDATE <name> SET <col> = <val> [, <col2> = <val2> ...] [WHERE <expr>];
 DELETE FROM <name> [WHERE <expr>];
 
 BEGIN; | COMMIT; | ROLLBACK;
+
+*Not Supported*
+ALTER TABLE table RENAME TO users;
+ALTER TABLE users RENAME COLUMN name TO full_name;
+
 ```
